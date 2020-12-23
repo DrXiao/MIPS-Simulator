@@ -21,11 +21,12 @@ int main(void) {
     char instruction[4][10] = {"", "", "", ""};
     char *token = NULL;
     while (fgets(inputBuf, 30, mipsIns) != NULL) {
-        char *assignPtr = instruction[0];
+        int index = 0;
+        char *assignPtr = instruction[index++];
         token = strtok(inputBuf, " ,\n");
         while (token != NULL) {
             strcpy(assignPtr, token);
-            assignPtr += 10;
+            assignPtr = instruction[index++];
             token = strtok(NULL, " ,\n");
         }
         printf("%s %s %s %s\n", instruction[0], instruction[1], instruction[2],
