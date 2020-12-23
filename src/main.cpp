@@ -6,18 +6,22 @@
     printf("Press any key to continue...");                                    \
     fgetc(stdin);
 
-static uint32_t mipsRegisters[32] = {[0] = 0, [1 ... 31] = 1};
-static uint32_t memory[32] = {[0 ... 31] = 1};
-
+static uint32_t mipsRegisters[32] = {0};
+static uint32_t memory[32] = {0};
 
 int main(void) {
-    
+
+    for(int indexOfReg_Mem = 0 ; indexOfReg_Mem < 32  ; indexOfReg_Mem++) {
+        mipsRegisters[indexOfReg_Mem] = 1;
+        memory[indexOfReg_Mem] = 1;
+    }
+    mipsRegisters[0] = 0;
     FILE *mipsIns = fopen("memory.txt", "r");
     char inputBuf[30] = "";
     char instruction[4][10] = {"", "", "", ""};
     char *token = NULL;
     while (fgets(inputBuf, 30, mipsIns) != NULL) {
-        char *assignPtr = instruction;
+        char *assignPtr = instruction[0];
         token = strtok(inputBuf, " ,\n");
         while (token != NULL) {
             strcpy(assignPtr, token);
