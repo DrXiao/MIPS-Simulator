@@ -1,6 +1,6 @@
-#Computer organization - MIPS Simulator
+# Computer organization - MIPS Simulator
 
-##Basic enviornment
+## Basic enviornment
 * C++ compiler : g++
 * Command ：
     * Windows ：```g++ -g -o main.exe (All cpp files)```
