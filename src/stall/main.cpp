@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <vector>
 using namespace std;
 
 #define PAUSE                                                                  \
@@ -11,7 +12,26 @@ using namespace std;
 static int mipsRegisters[32] = {0};
 static int memory[32] = {0};
 
+struct inst{
+    string instruction;
+    int reg_rs,reg_rt,reg_rd;
+    int data_rs,data_rt,data_rd;
+    bool regWrite,regRead,memWrite,memRead;
+
+    /* status = 1; IF  stage *
+    ** status = 2; ID  stage *
+    ** status = 3; EX  stage *
+    ** status = 4; MEM stage *
+    ** status = 5; WB  stage */
+    int status;
+    
+};
+
 int main(void) {
+    vector<inst> pipeline;
+    /* 按照規定給 Register賦值  */
+    /* 除了0號暫存器為0         */
+    /* 其他為 1                 */
 
     for (int idxOfReg_Mem = 0; idxOfReg_Mem < 32; idxOfReg_Mem++) {
         mipsRegisters[idxOfReg_Mem] = memory[idxOfReg_Mem] = 1;
@@ -29,9 +49,21 @@ int main(void) {
         cycle += 1;
         stringstream ss(instruction);
         for (int tokens = 0; tokens < 4; tokens++) {
-            getline(ss, insToken[tokens], ',');
-            cout << insToken[tokens] << " ";
+            getline(ss, insToken[tokens], ' ');
+            for(int i = 0;i<insToken[tokens].length();i++){
+                if(insToken[tokens][i] == ',')
+                    insToken[tokens][i]='\0';
+                if (insToken[0] == "lw"){}
+                else if (insToken[0] == "sw"){}
+                else if (insToken[0] == "add"){}
+                else if (insToken[0] == "sub"){}
+                else if (insToken[0] == "beq"){}
+            }
         }
+
+
+
+
         cout << endl;
     }
 
