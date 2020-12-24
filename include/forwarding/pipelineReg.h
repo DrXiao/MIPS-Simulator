@@ -3,9 +3,9 @@
 #include <cstdint>
 
 typedef struct control_EX {
-    bool RegDst;
+    int8_t RegDst;
     int8_t ALUOp;
-    bool ALUSrc;
+    int8_t ALUSrc;
 } control_EX;
 
 typedef struct control_M {
@@ -40,8 +40,8 @@ typedef struct ID_EX_Pipeline_Reg {
 } ID_EX_Pipeline_Reg;
 
 typedef struct EX_MEM_Pipeline_Reg {
-    control_M Ctl_M;
     control_WB Ctl_WB;
+    control_M Ctl_M;
     int32_t ALU_Result;
     uint8_t RegRd;
 } EX_MEM_Pipeline_Reg;

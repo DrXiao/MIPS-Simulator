@@ -1,7 +1,7 @@
 #Computer organization - MIPS Simulator
 
 ##Basic enviornment
-* C compiler : gcc
+* C++ compiler : g++
 * Command ：
-    * Windows ：```gcc -g -o main.exe *.c```
-    * Linux ：```gcc -g -o main *.c```
+    * Windows ：```g++ -g -o main.exe (All cpp files)```
+    * Linux ：```g++ -g -o main *.cpp```

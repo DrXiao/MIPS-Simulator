@@ -2,11 +2,14 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include "forwarding/pipelineReg.h"
 using namespace std;
 
 #define PAUSE                                                                  \
     printf("Press any key to continue...");                                    \
     fgetc(stdin);
+
+extern IF_ID_Pipeline_Reg IF_ID_Reg;
 
 static int mipsRegisters[32] = {0};
 static int memory[32] = {0};
