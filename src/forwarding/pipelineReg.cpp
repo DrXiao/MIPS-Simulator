@@ -1,4 +1,4 @@
-#include "forwarding/pipelineReg.h"
+#include "pipelineReg.h"
 
 IF_ID_Pipeline_Reg IF_ID_Reg = {
     .OpCode = 0, .RegRs = 0, .RegRt = 0, .RegRd = 0, .Immediate = 0};

@@ -2,7 +2,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#include "forwarding/pipelineReg.h"
+#include "pipelineReg.h"
 using namespace std;
 
 #define PAUSE                                                                  \
@@ -10,6 +10,9 @@ using namespace std;
     fgetc(stdin);
 
 extern IF_ID_Pipeline_Reg IF_ID_Reg;
+extern ID_EX_Pipeline_Reg ID_EX_Reg;
+extern EX_MEM_Pipeline_Reg EX_MEM_Reg;
+extern MEM_WB_Pipeline_Reg MEM_WB_Reg;
 
 static int mipsRegisters[32] = {0};
 static int memory[32] = {0};
