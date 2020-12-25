@@ -3,9 +3,9 @@
 #include <cstdint>
 
 typedef struct control_EX {
-    int8_t RegDst;
-    int8_t ALUOp;
-    int8_t ALUSrc;
+    bool RegDst;
+    uint8_t ALUOp;
+    bool ALUSrc;
 } control_EX;
 
 typedef struct control_M {

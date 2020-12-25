@@ -1,17 +1,15 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <sstream>
 
 #include "pipelineReg.h"
-#include "forwarding/init.h"
+#include "forwarding/util.h"
 #include "forwarding/forwarding.h"
 using namespace std;
 
 #define PAUSE                                                                  \
     printf("Press any key to continue...");                                    \
-    fgetc(stdin);
-
+    cin.get();
 
 int main(void) {
 
@@ -26,11 +24,10 @@ int main(void) {
     int cycle = 0;
     while (getline(mipsIns, instruction)) {
         cycle += 1;
-        stringstream ss(instruction);
-        for (int tokens = 0; tokens < 4; tokens++) {
-            getline(ss, insToken[tokens], ',');
-            cout << insToken[tokens] << " ";
-        }
+        Parse_MPIS_Ins(instruction, insToken);
+        cout << insToken[0] << " " << insToken[1] << " " << insToken[2] << " "
+             << insToken[3] << endl;
+
         cout << endl;
     }
 
