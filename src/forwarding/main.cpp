@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdio>
 #include <string>
 #include <fstream>
 
@@ -10,6 +11,8 @@ using namespace std;
 #define PAUSE                                                                  \
     printf("Press any key to continue...");                                    \
     cin.get();
+
+#define OUTPUT_FILE_OPEN 0
 
 int main(void) {
 
@@ -27,11 +30,20 @@ int main(void) {
         Parse_MPIS_Ins(instruction, insToken);
         cout << insToken[0] << " " << insToken[1] << " " << insToken[2] << " "
              << insToken[3] << endl;
-
-        cout << endl;
     }
-
     mipsIns.close();
+
+    FILE *outputFilePtr = stdout;
+#if (OUTPUT_FILE_OPEN == 1)
+    outputFilePtr = fopen("result.txt", "a");
+#endif
+
+    fprintf(outputFilePtr ,"MIPS code needs %d cycles\n", cycle);
+    Print_Reg_Mem(outputFilePtr);
+
+#if (OUTPUT_FILE_OPEN == 1)    
+    fclose(outputFilePtr);
+#endif
     PAUSE;
     return 0;
 }

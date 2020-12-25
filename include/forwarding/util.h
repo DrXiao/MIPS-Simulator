@@ -10,4 +10,6 @@ void Init_Reg_Mem(void);
 
 void Parse_MPIS_Ins(string &, string[4]);
 
+void Print_Reg_Mem(FILE *);
+
 #endif
