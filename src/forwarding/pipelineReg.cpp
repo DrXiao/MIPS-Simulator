@@ -6,7 +6,7 @@ IF_ID_Pipeline_Reg IF_ID_Reg = {
 ID_EX_Pipeline_Reg ID_EX_Reg = {
     .Ctl_WB = {.Reg_Write = 0, .MemToReg = 0},
     .Ctl_M = {.Branch = 0, .Mem_Read = 0, .Mem_Write = 0},
-    .Ctl_Ex = {.RegDst = 0, .ALUOp = 0, .ALUSrc = false},
+    .Ctl_Ex = {.RegDst = 0, .ALUOp = 0, .ALUSrc = 0},
     .ReadData1 = 0,
     .ReadData2 = 0,
     .Immediate = 0,
