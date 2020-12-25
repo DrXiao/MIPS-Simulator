@@ -53,4 +53,9 @@ typedef struct MEM_WB_Pipeline_Reg {
     uint8_t RegRd;
 } MEM_WB_Pipeline_Reg;
 
+extern IF_ID_Pipeline_Reg IF_ID_Reg;
+extern ID_EX_Pipeline_Reg ID_EX_Reg;
+extern EX_MEM_Pipeline_Reg EX_MEM_Reg;
+extern MEM_WB_Pipeline_Reg MEM_WB_Reg;
+
 #endif

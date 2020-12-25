@@ -8,7 +8,7 @@ CC=g++
 CFLAGS= -g -o
 
 forwarding:
-	$(CC) $(CFLAGS) $(TARGET) $(SRC_DIR)/$(FORWARDING)/*.cpp -I$(INCLUDE_DIR)/$(FORWARDING)
+	$(CC) $(CFLAGS) $(TARGET) $(SRC_DIR)/$(FORWARDING)/*.cpp -I$(INCLUDE_DIR)
 
 stall:
-	$(CC) $(CFLAGS) $(TARGET) $(SRC_DIR)/$(STALL)/*.cpp -I$(INCLUDE_DIR)/$(STALL)
+	$(CC) $(CFLAGS) $(TARGET) $(SRC_DIR)/$(STALL)/*.cpp -I$(INCLUDE_DIR)/*
