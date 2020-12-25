@@ -2,7 +2,10 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+
 #include "pipelineReg.h"
+#include "forwarding/init.h"
+#include "forwarding/forwarding.h"
 using namespace std;
 
 #define PAUSE                                                                  \
@@ -10,15 +13,9 @@ using namespace std;
     fgetc(stdin);
 
 
-static int mipsRegisters[32] = {0};
-static int memory[32] = {0};
-
 int main(void) {
 
-    for (int idxOfReg_Mem = 0; idxOfReg_Mem < 32; idxOfReg_Mem++) {
-        mipsRegisters[idxOfReg_Mem] = memory[idxOfReg_Mem] = 1;
-    }
-    mipsRegisters[0] = 0;
+    Init_Reg_Mem();
 
     string instruction;
     string insToken[4];
