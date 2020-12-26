@@ -25,19 +25,17 @@ int main(void) {
     mipsIns.open("memory.txt", ios::in);
 
     int cycle = 0;
-    while (getline(mipsIns, instruction) || CheckEnding() == false) {
-        if (mipsIns.eof()){
+    while (!(mipsIns.eof() && CheckEnding())) {
+        if(!mipsIns.eof())
+            getline(mipsIns, instruction);
+        else
             instruction = insToken[0] = "";
-        }
         cycle += 1;
-        
-    
         Write_Back();
         Memory_Read_Write();
         Execute();
         Instruction_Decode();
         Instruction_Fetch(instruction ,insToken);
-
         Move_Stages_Instruction(insToken[0]);
     }
     mipsIns.close();

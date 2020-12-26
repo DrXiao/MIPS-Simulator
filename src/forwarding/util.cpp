@@ -42,7 +42,7 @@ void Move_Stages_Instruction(string &Next_New_Instruction) {
 }
 
 bool CheckEnding(void) {
-    for(int stages_ins_idx = 0 ; stages_ins_idx < 5 ; stages_ins_idx++) {
+    for(int stages_ins_idx = 0 ; stages_ins_idx < 4 ; stages_ins_idx++) {
         if(stage_ins[stages_ins_idx] != "")
             return false;
     }
