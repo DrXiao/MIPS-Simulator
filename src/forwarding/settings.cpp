@@ -67,6 +67,13 @@ void Memory_Read_Write(void) {
 
 void Execute(void) {
     if (stage_ins[2] != "") return;
+
+    // TODO : Executing ALU.
+
+
+    EX_MEM_Reg.Ctl_WB = ID_EX_Reg.Ctl_WB;
+    EX_MEM_Reg.Ctl_M = ID_EX_Reg.Ctl_M;
+
     return;
 }
 
@@ -77,25 +84,60 @@ void Instruction_Decode(void) {
 
     ID_Stage.ReadData1 = mipsRegisters[ID_Stage.ReadReg1];
     ID_Stage.ReadData2 = mipsRegisters[ID_Stage.ReadReg2];
+
+    if (stage_ins[1] == ADD || stage_ins[1] == SUB) {
+        ID_EX_Reg.Ctl_WB = {.Reg_Write = 1,.MemToReg = 0};
+        ID_EX_Reg.Ctl_M = {.Branch = 0, .Mem_Read = 0, .Mem_Write = 0};
+        ID_EX_Reg.Ctl_Ex = {.RegDst = 1, .ALUOp = 0x02, .ALUSrc = 0};
+        ID_EX_Reg.ReadData1 = mipsRegisters[IF_ID_Reg.RegRs];
+        ID_EX_Reg.ReadData2 = mipsRegisters[IF_ID_Reg.RegRt];
+        ID_EX_Reg.Immediate = IF_ID_Reg.Immediate;
+        ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
+        ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
+        ID_EX_Reg.RegRd = IF_ID_Reg.RegRd;
+    }
+    else if (stage_ins[1] == LW) {
+        ID_EX_Reg.Ctl_WB = {.Reg_Write = 1,.MemToReg = 1};
+        ID_EX_Reg.Ctl_M = {.Branch = 0, .Mem_Read = 1, .Mem_Write = 0};
+        ID_EX_Reg.Ctl_Ex = {.RegDst = 0, .ALUOp = 0x00, .ALUSrc = 1};
+        ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
+        ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
+        ID_EX_Reg.RegRd = IF_ID_Reg.RegRs;  // Needs to check
+    }
+    else if (stage_ins[1] == SW) {
+        ID_EX_Reg.Ctl_WB = {.Reg_Write = 0};
+        ID_EX_Reg.Ctl_M = {.Branch = 0, .Mem_Read = 0, .Mem_Write = 1};
+        ID_EX_Reg.Ctl_Ex = {.ALUOp = 0x00, .ALUSrc = 1};
+        ID_EX_Reg.ReadData1 = mipsRegisters[IF_ID_Reg.RegRs];
+        ID_EX_Reg.ReadData2 = mipsRegisters[IF_ID_Reg.RegRt];
+        ID_EX_Reg.Immediate = IF_ID_Reg.Immediate;
+        ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
+        ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
+        ID_EX_Reg.RegRd = IF_ID_Reg.RegRs;  // Needs to check
+    }
+    else {
+        ID_EX_Reg.Ctl_WB = {.Reg_Write = 0};
+        ID_EX_Reg.Ctl_M = {.Branch = 1, .Mem_Read = 0, .Mem_Write = 0};
+        ID_EX_Reg.Ctl_Ex = {.ALUOp = 0x01, .ALUSrc = 0};
+        ID_EX_Reg.ReadData1 = mipsRegisters[IF_ID_Reg.RegRs];
+        ID_EX_Reg.ReadData2 = mipsRegisters[IF_ID_Reg.RegRt];
+        ID_EX_Reg.Immediate = IF_ID_Reg.Immediate;
+        ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
+        ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
+        ID_EX_Reg.RegRd = IF_ID_Reg.RegRs;  // Needs to check
+    }
 }
 
-void Instruction_Fetch(string &instruction, string insToken[4]) {
-    for (string::iterator it = instruction.begin(); it != instruction.end();
-         it++) {
-        if (*it == ',') *it = ' ';
-    }
-    stringstream strStream(instruction);
-    strStream >> insToken[0] >> insToken[1] >> insToken[2] >> insToken[3];
-
+void Instruction_Fetch(string insToken[4]) {
     if (insToken[0] == "") return;
 
     IF_ID_Reg.OpCode = insToken[0];
-    if (insToken[0] == "lw" || insToken[0] == "sw") {
+    if (insToken[0] == LW || insToken[0] == SW) {
         sscanf(insToken[1].c_str(), "$%hhu", &IF_ID_Reg.RegRs);
         sscanf(insToken[2].c_str(), "%hd($%hhu)", &IF_ID_Reg.Immediate,
                &IF_ID_Reg.RegRt);
     }
-    else if (insToken[0] == "beq") {
+    else if (insToken[0] == BEQ) {
         sscanf(insToken[1].c_str(), "$%hhu", &IF_ID_Reg.RegRs);
         sscanf(insToken[2].c_str(), "$%hhu", &IF_ID_Reg.RegRt);
         IF_ID_Reg.Immediate = stoul(insToken[3]);

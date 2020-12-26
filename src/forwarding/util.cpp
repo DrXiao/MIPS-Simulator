@@ -34,6 +34,16 @@ void Print_Reg_Mem(FILE *outputFilePtr) {
     fprintf(outputFilePtr ,"\n");
 }
 
+void Parse_Instruction(string &instruction, string insToken[4]) {
+    for (string::iterator it = instruction.begin(); it != instruction.end();
+         it++) {
+        if (*it == ',') *it = ' ';
+    }
+    stringstream strStream(instruction);
+    strStream >> insToken[0] >> insToken[1] >> insToken[2] >> insToken[3];
+
+}
+
 void Move_Stages_Instruction(string &Next_New_Instruction) {
     for(int stages_ins_idx = 4; stages_ins_idx > 0 ; stages_ins_idx--) {
         stage_ins[stages_ins_idx] = stage_ins[stages_ins_idx - 1];

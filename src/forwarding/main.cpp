@@ -26,17 +26,19 @@ int main(void) {
 
     int cycle = 0;
     while (!(mipsIns.eof() && CheckEnding())) {
-        if(!mipsIns.eof())
+        if (!mipsIns.eof()) {
             getline(mipsIns, instruction);
+            Parse_Instruction(instruction, insToken);
+        }
         else
             instruction = insToken[0] = "";
         cycle += 1;
+        Move_Stages_Instruction(insToken[0]);
         Write_Back();
         Memory_Read_Write();
         Execute();
         Instruction_Decode();
-        Instruction_Fetch(instruction ,insToken);
-        Move_Stages_Instruction(insToken[0]);
+        Instruction_Fetch(insToken);
     }
     mipsIns.close();
 
@@ -45,10 +47,10 @@ int main(void) {
     outputFilePtr = fopen("result.txt", "a");
 #endif
 
-    fprintf(outputFilePtr ,"MIPS code needs %d cycles\n", cycle);
+    fprintf(outputFilePtr, "MIPS code needs %d cycles\n", cycle);
     Print_Reg_Mem(outputFilePtr);
 
-#if (OUTPUT_FILE_OPEN == 1)    
+#if (OUTPUT_FILE_OPEN == 1)
     fclose(outputFilePtr);
 #endif
     PAUSE;
