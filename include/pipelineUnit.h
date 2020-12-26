@@ -6,8 +6,6 @@ typedef struct Pipeline_ID_Stage {
     // ID inputs
     uint8_t ReadReg1;
     uint8_t ReadReg2;
-    uint8_t WriteReg;
-    int32_t WriteData;
 
     // ID outputs
     int32_t ReadData1;
@@ -29,7 +27,7 @@ typedef struct Pipeline_MEM_Stage {
     int32_t Address;
     int32_t WriteData;
 
-    // MEM outpus
+    // MEM outputs
     int32_t ReadData;
 } Pipeline_MEM_Stage;
 

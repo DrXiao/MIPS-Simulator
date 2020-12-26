@@ -44,6 +44,7 @@ typedef struct ID_EX_Pipeline_Reg {
 typedef struct EX_MEM_Pipeline_Reg {
     control_WB Ctl_WB;
     control_M Ctl_M;
+    bool Zero;
     int32_t ALU_Result;
     uint8_t RegRd;
 } EX_MEM_Pipeline_Reg;

@@ -3,7 +3,7 @@
 #include <cstdio>
 #include "pipelineReg.h"
 #include "pipelineUnit.h"
-#include "forwarding/util.h"
+#include "util.h"
 using namespace std;
 
 IF_ID_Pipeline_Reg IF_ID_Reg = {
@@ -23,6 +23,7 @@ ID_EX_Pipeline_Reg ID_EX_Reg = {
 EX_MEM_Pipeline_Reg EX_MEM_Reg = {
     .Ctl_WB = {.Reg_Write = 0, .MemToReg = 0},
     .Ctl_M = {.Branch = 0, .Mem_Read = 0, .Mem_Write = 0},
+    .Zero = 0,
     .ALU_Result = 0,
     .RegRd = 0};
 
@@ -31,22 +32,19 @@ MEM_WB_Pipeline_Reg MEM_WB_Reg = {.Ctl_WB = {.Reg_Write = 0, .MemToReg = 0},
                                   .ALU_Result = 0,
                                   .RegRd = 0};
 
-Pipeline_ID_Stage ID_Stage = {.ReadReg1 = 0,
-                              .ReadReg2 = 0,
-                              .WriteReg = 0,
-                              .WriteData = 0,
-                              .ReadData1 = 0,
-                              .ReadData2 = 0};
+Pipeline_ID_Stage ID_Stage = {
+    .ReadReg1 = 0, .ReadReg2 = 0, .ReadData1 = 0, .ReadData2 = 0};
 
 Pipeline_EX_Stage EX_Stage = {
-    .Operand_1 = 0, .Operand_2 = 0, .Zero = false, .ALU_Result = 0};
+    .Operand_1 = 0, .Operand_2 = 0, .Zero = 0, .ALU_Result = 0};
 
 Pipeline_MEM_Stage Mem_Stage = {.Address = 0, .WriteData = 0, .ReadData = 0};
 
-bool stages[5] = {false};
+bool stages_bubble[5] = {0};
 string stage_ins[5];
 
 void Write_Back(void) {
+    if (stage_ins[4] != "") return;
     if (MEM_WB_Reg.Ctl_WB.Reg_Write) {
         mipsRegisters[MEM_WB_Reg.RegRd] = MEM_WB_Reg.Ctl_WB.MemToReg
                                               ? MEM_WB_Reg.DataOfMem
@@ -55,6 +53,7 @@ void Write_Back(void) {
 }
 
 void Memory_Read_Write(void) {
+    if (stage_ins[3] != "") return;
     MEM_WB_Reg.Ctl_WB = EX_MEM_Reg.Ctl_WB;
     if (EX_MEM_Reg.Ctl_M.Mem_Read) {
         MEM_WB_Reg.DataOfMem = memory[EX_MEM_Reg.ALU_Result];
@@ -67,11 +66,17 @@ void Memory_Read_Write(void) {
 }
 
 void Execute(void) {
+    if (stage_ins[2] != "") return;
     return;
 }
 
 void Instruction_Decode(void) {
-    return;
+    if (stage_ins[1] != "") return;
+    ID_Stage.ReadReg1 = IF_ID_Reg.RegRs;
+    ID_Stage.ReadReg2 = IF_ID_Reg.RegRt;
+
+    ID_Stage.ReadData1 = mipsRegisters[ID_Stage.ReadReg1];
+    ID_Stage.ReadData2 = mipsRegisters[ID_Stage.ReadReg2];
 }
 
 void Instruction_Fetch(string &instruction, string insToken[4]) {
@@ -81,6 +86,8 @@ void Instruction_Fetch(string &instruction, string insToken[4]) {
     }
     stringstream strStream(instruction);
     strStream >> insToken[0] >> insToken[1] >> insToken[2] >> insToken[3];
+
+    if (insToken[0] == "") return;
 
     IF_ID_Reg.OpCode = insToken[0];
     if (insToken[0] == "lw" || insToken[0] == "sw") {

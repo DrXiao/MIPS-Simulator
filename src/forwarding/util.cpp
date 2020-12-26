@@ -1,4 +1,4 @@
-#include "forwarding/util.h"
+#include "util.h"
 #include <cstdio>
 #include <iomanip>
 #include <string>
@@ -32,4 +32,19 @@ void Print_Reg_Mem(FILE *outputFilePtr) {
         fprintf(outputFilePtr ,"  %-*d", OUTPUT_FIELD, memory[idxOfMem]);
     }
     fprintf(outputFilePtr ,"\n");
+}
+
+void Move_Stages_Instruction(string &Next_New_Instruction) {
+    for(int stages_ins_idx = 4; stages_ins_idx > 0 ; stages_ins_idx--) {
+        stage_ins[stages_ins_idx] = stage_ins[stages_ins_idx - 1];
+    }
+    stage_ins[0] = Next_New_Instruction;
+}
+
+bool CheckEnding(void) {
+    for(int stages_ins_idx = 0 ; stages_ins_idx < 5 ; stages_ins_idx++) {
+        if(stage_ins[stages_ins_idx] != "")
+            return false;
+    }
+    return true;
 }

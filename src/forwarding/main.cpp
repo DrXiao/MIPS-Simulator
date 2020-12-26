@@ -4,7 +4,7 @@
 #include <fstream>
 
 #include "pipelineReg.h"
-#include "forwarding/util.h"
+#include "util.h"
 #include "forwarding/forwarding.h"
 using namespace std;
 
@@ -25,14 +25,20 @@ int main(void) {
     mipsIns.open("memory.txt", ios::in);
 
     int cycle = 0;
-    while (getline(mipsIns, instruction)) {
+    while (getline(mipsIns, instruction) || CheckEnding() == false) {
+        if (mipsIns.eof()){
+            instruction = insToken[0] = "";
+        }
         cycle += 1;
         
+    
+        Write_Back();
+        Memory_Read_Write();
+        Execute();
         Instruction_Decode();
         Instruction_Fetch(instruction ,insToken);
-        cout << insToken[0] << " " << insToken[1] << " " << insToken[2] << " "
-             << insToken[3] << endl;
-        
+
+        Move_Stages_Instruction(insToken[0]);
     }
     mipsIns.close();
 
