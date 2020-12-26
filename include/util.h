@@ -9,6 +9,7 @@
 using namespace std;
 
 extern FILE *outputFilePtr;
+extern int cycle;
 
 extern int mipsRegisters[32];
 extern int memory[32];

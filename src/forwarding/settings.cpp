@@ -7,6 +7,7 @@
 using namespace std;
 
 FILE *outputFilePtr = stdout;
+int cycle = 0;
 
 IF_ID_Pipeline_Reg IF_ID_Reg = {
     .OpCode = "", .RegRs = 0, .RegRt = 0, .RegRd = 0, .Immediate = 0};
