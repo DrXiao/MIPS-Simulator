@@ -20,7 +20,7 @@ typedef struct control_WB {
 } control_WB;
 
 typedef struct IF_ID_Pipeline_Reg {
-    uint8_t OpCode;
+    string OpCode;
     uint8_t RegRs;
     uint8_t RegRt;
     uint8_t RegRd;

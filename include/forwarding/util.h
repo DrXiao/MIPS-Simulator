@@ -12,4 +12,14 @@ void Parse_MPIS_Ins(string &, string[4]);
 
 void Print_Reg_Mem(FILE *);
 
+void Instruction_Fetch(string[4]);
+
+void Instruction_Decode(void);
+
+void Execute(void);
+
+void Memory_Read_Write(void);
+
+void Write_Back(void);
+
 #endif
