@@ -37,7 +37,7 @@ int main(void) {
         else
             instruction = insToken[0] = "";
         cycle += 1;
-        printf("Cycle %d : \n", cycle);
+        fprintf(outputFilePtr, "Cycle %d : \n", cycle);
         Move_Stages_Instruction(insToken[0]);
         Write_Back();
         Memory_Read_Write();

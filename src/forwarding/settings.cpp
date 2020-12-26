@@ -49,8 +49,9 @@ string stage_ins[5];
 void Write_Back(void) {
     if (stage_ins[4] == "") return;
 
-    printf("\t%s : WB", stage_ins[4].c_str());
-    printf(" %d %d\n", MEM_WB_Reg.Ctl_WB.Reg_Write, MEM_WB_Reg.Ctl_WB.MemToReg);
+    fprintf(outputFilePtr, "\t%s : WB", stage_ins[4].c_str());
+    fprintf(outputFilePtr, " %d %d\n", MEM_WB_Reg.Ctl_WB.Reg_Write,
+            MEM_WB_Reg.Ctl_WB.MemToReg);
 
     if (MEM_WB_Reg.Ctl_WB.Reg_Write) {
         mipsRegisters[MEM_WB_Reg.RegRd] = MEM_WB_Reg.Ctl_WB.MemToReg
@@ -61,8 +62,8 @@ void Write_Back(void) {
 
 void Memory_Read_Write(void) {
     if (stage_ins[3] == "") return;
-    printf("\t%s : MEM", stage_ins[3].c_str());
-    printf(" \n");
+    fprintf(outputFilePtr, "\t%s : MEM", stage_ins[3].c_str());
+    fprintf(outputFilePtr, " \n");
     MEM_WB_Reg.Ctl_WB = EX_MEM_Reg.Ctl_WB;
     if (EX_MEM_Reg.Ctl_M.Mem_Read) {
         MEM_WB_Reg.DataOfMem = memory[EX_MEM_Reg.ALU_Result >> 2];
@@ -76,8 +77,8 @@ void Memory_Read_Write(void) {
 
 void Execute(void) {
     if (stage_ins[2] == "") return;
-    printf("\t%s : EX", stage_ins[2].c_str());
-    printf(" \n");
+    fprintf(outputFilePtr, "\t%s : EX", stage_ins[2].c_str());
+    fprintf(outputFilePtr, " \n");
     // TODO : Executing ALU.
     EX_Stage.Operand_1 = ID_EX_Reg.ReadData1;
     if (stage_ins[2] == "add" || stage_ins[2] == "sub") {
@@ -106,7 +107,7 @@ void Execute(void) {
 
 void Instruction_Decode(void) {
     if (stage_ins[1] == "") return;
-    printf("\t%s : ID\n", stage_ins[1].c_str());
+    fprintf(outputFilePtr, "\t%s : ID\n", stage_ins[1].c_str());
     ID_Stage.ReadReg1 = IF_ID_Reg.RegRs;
     ID_Stage.ReadReg2 = IF_ID_Reg.RegRt;
 
@@ -158,7 +159,7 @@ void Instruction_Decode(void) {
 
 void Instruction_Fetch(string insToken[4]) {
     if (insToken[0] == "") return;
-    printf("\t%s : IF\n", stage_ins[0].c_str());
+    fprintf(outputFilePtr, "\t%s : IF\n", stage_ins[0].c_str());
     IF_ID_Reg.OpCode = insToken[0];
     if (insToken[0] == LW || insToken[0] == SW) {
         sscanf(insToken[1].c_str(), "$%hhu", &IF_ID_Reg.RegRs);
