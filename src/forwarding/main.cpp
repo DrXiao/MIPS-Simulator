@@ -18,8 +18,8 @@ int main(void) {
 
     Init_Reg_Mem();
 
-    string instruction;
-    string insToken[4];
+    string instruction = "";
+    string insToken[4] = {"", "", "", ""};
 
     fstream mipsIns;
     mipsIns.open("memory.txt", ios::in);
@@ -27,9 +27,12 @@ int main(void) {
     int cycle = 0;
     while (getline(mipsIns, instruction)) {
         cycle += 1;
-        Parse_MPIS_Ins(instruction, insToken);
+        
+        Instruction_Decode();
+        Instruction_Fetch(instruction ,insToken);
         cout << insToken[0] << " " << insToken[1] << " " << insToken[2] << " "
              << insToken[3] << endl;
+        
     }
     mipsIns.close();
 

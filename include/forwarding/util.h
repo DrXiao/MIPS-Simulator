@@ -8,11 +8,9 @@ extern int memory[32];
 
 void Init_Reg_Mem(void);
 
-void Parse_MPIS_Ins(string &, string[4]);
-
 void Print_Reg_Mem(FILE *);
 
-void Instruction_Fetch(string[4]);
+void Instruction_Fetch(string &,string[4]);
 
 void Instruction_Decode(void);
 

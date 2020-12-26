@@ -1,11 +1,12 @@
 #include <string>
+#include <sstream>
 #include <cstdio>
 #include "pipelineReg.h"
 #include "forwarding/util.h"
 using namespace std;
 
 IF_ID_Pipeline_Reg IF_ID_Reg = {
-    .OpCode = 0, .RegRs = 0, .RegRt = 0, .RegRd = 0, .Immediate = 0};
+    .OpCode = "", .RegRs = 0, .RegRt = 0, .RegRd = 0, .Immediate = 0};
 
 ID_EX_Pipeline_Reg ID_EX_Reg = {
     .Ctl_WB = {.Reg_Write = 0, .MemToReg = 0},
@@ -53,26 +54,34 @@ void Memory_Read_Write(void) {
 }
 
 void Execute(void) {
+    return;
 }
 
 void Instruction_Decode(void) {
+    return;
 }
+void Instruction_Fetch(string &instruction, string insToken[4]) {
+    for (string::iterator it = instruction.begin(); it != instruction.end();
+         it++) {
+        if (*it == ',') *it = ' ';
+    }
+    stringstream strStream(instruction);
+    strStream >> insToken[0] >> insToken[1] >> insToken[2] >> insToken[3];
 
-void Instruction_Fetch(string insToken[4]) {
     IF_ID_Reg.OpCode = insToken[0];
     if (insToken[0] == "lw" || insToken[0] == "sw") {
-        sscanf(insToken[1].c_str(), "$%u", &IF_ID_Reg.RegRs);
-        sscanf(insToken[2].c_str(), "%u($%u)", &IF_ID_Reg.Immediate, &IF_ID_Reg.RegRt);
+        sscanf(insToken[1].c_str(), "$%hhu", &IF_ID_Reg.RegRs);
+        sscanf(insToken[2].c_str(), "%hd($%hhu)", &IF_ID_Reg.Immediate,
+               &IF_ID_Reg.RegRt);
     }
     else if (insToken[0] == "beq") {
-        sscanf(insToken[1].c_str(), "$&u", &IF_ID_Reg.RegRs);
-        sscanf(insToken[2].c_str(), "$%u", &IF_ID_Reg.RegRt);
+        sscanf(insToken[1].c_str(), "$%hhu", &IF_ID_Reg.RegRs);
+        sscanf(insToken[2].c_str(), "$%hhu", &IF_ID_Reg.RegRt);
         IF_ID_Reg.Immediate = stoul(insToken[3]);
     }
     else {
-        sscanf(insToken[1].c_str(), "$%u", &IF_ID_Reg.RegRd);
-        sscanf(insToken[2].c_str(), "$%u", &IF_ID_Reg.RegRs);
-        sscanf(insToken[3].c_str(), "$%u", &IF_ID_Reg.RegRt);
+        sscanf(insToken[1].c_str(), "$%hhu", &IF_ID_Reg.RegRd);
+        sscanf(insToken[2].c_str(), "$%hhu", &IF_ID_Reg.RegRs);
+        sscanf(insToken[3].c_str(), "$%hhu", &IF_ID_Reg.RegRt);
     }
-    // TODO : pass info to ID_EX_Reg
 }

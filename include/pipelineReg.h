@@ -1,6 +1,8 @@
 #ifndef __PIPELINE_REG_H__
 #define __PIPELINE_REG_H__
 #include <cstdint>
+#include <string>
+using namespace std;
 
 typedef struct control_EX {
     bool RegDst;
