@@ -28,7 +28,7 @@ int main(void) {
     fstream mipsIns;
     mipsIns.open("memory.txt", ios::in);
 
-    int cycle = 0;
+    cycle = 0;
     while (!(mipsIns.eof() && CheckEnding())) {
         if (!mipsIns.eof()) {
             getline(mipsIns, instruction);
