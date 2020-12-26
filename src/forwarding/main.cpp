@@ -19,7 +19,7 @@ int main(void) {
     Init_Reg_Mem();
 
 #if (OUTPUT_FILE_OPEN == 1)
-    outputFilePtr = fopen("result.txt", "a");
+    outputFilePtr = fopen("result.txt", "w");
 #endif
 
     string instruction = "";
