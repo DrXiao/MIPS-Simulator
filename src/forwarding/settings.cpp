@@ -2,6 +2,7 @@
 #include <sstream>
 #include <cstdio>
 #include "pipelineReg.h"
+#include "pipelineUnit.h"
 #include "forwarding/util.h"
 using namespace std;
 
@@ -29,6 +30,18 @@ MEM_WB_Pipeline_Reg MEM_WB_Reg = {.Ctl_WB = {.Reg_Write = 0, .MemToReg = 0},
                                   .DataOfMem = 0,
                                   .ALU_Result = 0,
                                   .RegRd = 0};
+
+Pipeline_ID_Stage ID_Stage = {.ReadReg1 = 0,
+                              .ReadReg2 = 0,
+                              .WriteReg = 0,
+                              .WriteData = 0,
+                              .ReadData1 = 0,
+                              .ReadData2 = 0};
+
+Pipeline_EX_Stage EX_Stage = {
+    .Operand_1 = 0, .Operand_2 = 0, .Zero = false, .ALU_Result = 0};
+
+Pipeline_MEM_Stage Mem_Stage = {.Address = 0, .WriteData = 0, .ReadData = 0};
 
 bool stages[5] = {false};
 string stage_ins[5];
@@ -60,6 +73,7 @@ void Execute(void) {
 void Instruction_Decode(void) {
     return;
 }
+
 void Instruction_Fetch(string &instruction, string insToken[4]) {
     for (string::iterator it = instruction.begin(); it != instruction.end();
          it++) {
