@@ -18,6 +18,10 @@ int main(void) {
 
     Init_Reg_Mem();
 
+#if (OUTPUT_FILE_OPEN == 1)
+    outputFilePtr = fopen("result.txt", "a");
+#endif
+
     string instruction = "";
     string insToken[4] = {"", "", "", ""};
 
@@ -41,11 +45,6 @@ int main(void) {
         Instruction_Fetch(insToken);
     }
     mipsIns.close();
-
-    FILE *outputFilePtr = stdout;
-#if (OUTPUT_FILE_OPEN == 1)
-    outputFilePtr = fopen("result.txt", "a");
-#endif
 
     fprintf(outputFilePtr, "MIPS code needs %d cycles\n", cycle);
     Print_Reg_Mem(outputFilePtr);

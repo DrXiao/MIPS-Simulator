@@ -8,6 +8,8 @@
 #define BEQ "beq"
 using namespace std;
 
+extern FILE *outputFilePtr;
+
 extern int mipsRegisters[32];
 extern int memory[32];
 
