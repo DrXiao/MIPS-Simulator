@@ -4,8 +4,8 @@
 
 typedef struct Pipeline_ID_Stage {
     // ID inputs
-    uint8_t ReadReg1;
-    uint8_t ReadReg2;
+    uint16_t ReadReg1;
+    uint16_t ReadReg2;
 
     // ID outputs
     int32_t ReadData1;

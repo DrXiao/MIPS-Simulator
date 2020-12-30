@@ -164,18 +164,18 @@ void Instruction_Fetch(string insToken[4]) {
     fprintf(outputFilePtr, "\t%s : IF\n", stage_ins[0].c_str());
     IF_ID_Reg.OpCode = insToken[0];
     if (insToken[0] == LW || insToken[0] == SW) {
-        sscanf(insToken[1].c_str(), "$%hhu", &IF_ID_Reg.RegRt);
-        sscanf(insToken[2].c_str(), "%hd($%hhu)", &IF_ID_Reg.Immediate,
+        sscanf(insToken[1].c_str(), "$%hu", &IF_ID_Reg.RegRt);
+        sscanf(insToken[2].c_str(), "%hd($%hu)", &IF_ID_Reg.Immediate,
                &IF_ID_Reg.RegRs);
     }
     else if (insToken[0] == BEQ) {
-        sscanf(insToken[1].c_str(), "$%hhu", &IF_ID_Reg.RegRs);
-        sscanf(insToken[2].c_str(), "$%hhu", &IF_ID_Reg.RegRt);
+        sscanf(insToken[1].c_str(), "$%hu", &IF_ID_Reg.RegRs);
+        sscanf(insToken[2].c_str(), "$%hu", &IF_ID_Reg.RegRt);
         IF_ID_Reg.Immediate = stol(insToken[3]);
     }
     else {
-        sscanf(insToken[1].c_str(), "$%hhu", &IF_ID_Reg.RegRd);
-        sscanf(insToken[2].c_str(), "$%hhu", &IF_ID_Reg.RegRs);
-        sscanf(insToken[3].c_str(), "$%hhu", &IF_ID_Reg.RegRt);
+        sscanf(insToken[1].c_str(), "$%hu", &IF_ID_Reg.RegRd);
+        sscanf(insToken[2].c_str(), "$%hu", &IF_ID_Reg.RegRs);
+        sscanf(insToken[3].c_str(), "$%hu", &IF_ID_Reg.RegRt);
     }
 }

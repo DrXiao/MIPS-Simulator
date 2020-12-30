@@ -31,10 +31,9 @@ int main(void) {
     cycle = 0;
     
     while (!(mipsIns.eof() && CheckEnding())) {
-        
-        if(((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && ((int)EX_MEM_Reg.RegRd != 0)
+        if(((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0)
                 && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRs))
-            || ((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && ((int)EX_MEM_Reg.RegRd != 0)
+            || ((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0)
                 && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRt)))    
             {
                 printf("WWWWW\n");
