@@ -66,13 +66,13 @@ void Memory_Read_Write(void) {
     
     MEM_WB_Reg.Ctl_WB = EX_MEM_Reg.Ctl_WB;
     Mem_Stage.Address = EX_MEM_Reg.ALU_Result;
-    Mem_Stage.WriteData;
+    Mem_Stage.WriteData = EX_MEM_Reg.ReadData;
     if (EX_MEM_Reg.Ctl_M.Mem_Read) {
         MEM_WB_Reg.DataOfMem = memory[EX_MEM_Reg.ALU_Result >> 2];
     }
     else if (EX_MEM_Reg.Ctl_M.Mem_Write) {
         // 檢查一下
-        memory[EX_MEM_Reg.ALU_Result >> 2] = mipsRegisters[EX_MEM_Reg.RegRd];
+        memory[Mem_Stage.Address >> 2] = Mem_Stage.WriteData;
     }
     MEM_WB_Reg.ALU_Result = EX_MEM_Reg.ALU_Result;
     MEM_WB_Reg.RegRd = EX_MEM_Reg.RegRd;
@@ -102,6 +102,7 @@ void Execute(void) {
     EX_MEM_Reg.Ctl_WB = ID_EX_Reg.Ctl_WB;
     EX_MEM_Reg.Ctl_M = ID_EX_Reg.Ctl_M;
     EX_MEM_Reg.ALU_Result = EX_Stage.ALU_Result;
+    EX_MEM_Reg.ReadData = EX_Stage.Operand_2;
     EX_MEM_Reg.Zero = EX_Stage.Zero;
     EX_MEM_Reg.RegRd = ID_EX_Reg.RegRd;
 }

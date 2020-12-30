@@ -49,6 +49,7 @@ typedef struct EX_MEM_Pipeline_Reg {
     control_M Ctl_M;
     bool Zero;
     int32_t ALU_Result;
+    int32_t ReadData;
     uint8_t RegRd;
 } EX_MEM_Pipeline_Reg;
 
