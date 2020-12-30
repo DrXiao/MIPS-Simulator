@@ -1,63 +1,63 @@
 #include <iostream>
+#include <cstdio>
 #include <string>
 #include <fstream>
-#include <sstream>
-#include <vector>
-#include "pipelineReg.h"
-using namespace std;
 
+#include "pipelineReg.h"
+#include "util.h"
+#include "forwarding/forwarding.h"
+using namespace std;
 
 #define PAUSE                                                                  \
     printf("Press any key to continue...");                                    \
-    fgetc(stdin);
+    cin.get();
 
-
-static int mipsRegisters[32] = {0};
-static int memory[32] = {0};
+#define OUTPUT_FILE_OPEN 0
 
 int main(void) {
-    vector<inst> pipeline;
-    /* 按照規定給 Register賦值  */
-    /* 除了0號暫存器為0         */
-    /* 其他為 1                 */
 
-    for (int idxOfReg_Mem = 0; idxOfReg_Mem < 32; idxOfReg_Mem++) {
-        mipsRegisters[idxOfReg_Mem] = memory[idxOfReg_Mem] = 1;
-    }
-    mipsRegisters[0] = 0;
+    Init_Reg_Mem();
 
-    string instruction;
-    string insToken[4];
+#if (OUTPUT_FILE_OPEN == 1)
+    outputFilePtr = fopen("result.txt", "w");
+#endif
+
+    string instruction = "";
+    string insToken[4] = {"", "", "", ""};
 
     fstream mipsIns;
     mipsIns.open("memory.txt", ios::in);
 
-    int cycle = 0;
-    while (getline(mipsIns, instruction)) {
-        cycle += 1;
-        stringstream ss(instruction);
-        for (int tokens = 0; tokens < 4; tokens++) {
-            getline(ss, insToken[tokens], ' ');
-            for(int i = 0;i<insToken[tokens].length();i++){
-                if(insToken[tokens][i] == ',')
-                    insToken[tokens][i]='\0';
-                if (insToken[0] == "lw"){
-                    
-                }
-                else if (insToken[0] == "sw"){}
-                else if (insToken[0] == "add"){}
-                else if (insToken[0] == "sub"){}
-                else if (insToken[0] == "beq"){}
-            }
+    cycle = 0;
+    
+    while (!(mipsIns.eof() && CheckEnding())) {
+        if (!mipsIns.eof()) {
+            getline(mipsIns, instruction);
+            Parse_Instruction(instruction, insToken);
         }
+        else
+            instruction = insToken[0] = "";
+        cycle += 1;
+        fprintf(outputFilePtr, "Cycle %d : \n", cycle);
+        Move_Stages_Instruction(insToken[0]);
 
-
-
-
-        cout << endl;
+        
+        // if(MEM_WB_Reg.Ctl_WB.Reg_Write && (MEM_WB_Reg.RegRd!= 0) && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRs))
+        Write_Back();
+        Memory_Read_Write();
+        Execute();
+        Instruction_Decode();
+        Instruction_Fetch(insToken);
+        
     }
-
     mipsIns.close();
-    PAUSE;
+
+    fprintf(outputFilePtr, "MIPS code needs %d cycles\n", cycle);
+    Print_Reg_Mem(outputFilePtr);
+
+#if (OUTPUT_FILE_OPEN == 1)
+    fclose(outputFilePtr);
+#endif
+    // PAUSE;
     return 0;
 }
