@@ -26,6 +26,7 @@ EX_MEM_Pipeline_Reg EX_MEM_Reg = {
     .Ctl_M = {.Branch = 0, .Mem_Read = 0, .Mem_Write = 0},
     .Zero = 0,
     .ALU_Result = 0,
+    .ReadData = 0,
     .RegRd = 0};
 
 MEM_WB_Pipeline_Reg MEM_WB_Reg = {.Ctl_WB = {.Reg_Write = 0, .MemToReg = 0},
