@@ -52,6 +52,12 @@ void Move_Stages_Instruction(string &Next_New_Instruction) {
     }
     stage_ins[0] = Next_New_Instruction;
 }
+/* 測試看看亂寫ㄉ*/
+void Move_With_Stall(){
+    for (int stages_ins_idx = 4; stages_ins_idx > 2; stages_ins_idx--) {
+        stage_ins[stages_ins_idx] = stage_ins[stages_ins_idx - 1];
+    }
+}
 
 bool CheckEnding(void) {
     for (int stages_ins_idx = 0; stages_ins_idx < 4; stages_ins_idx++) {

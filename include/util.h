@@ -37,4 +37,7 @@ void Move_Stages_Instruction(string &);
 
 bool CheckEnding(void);
 
+// 亂寫ㄉ
+void Move_With_Stall(void);
+
 #endif

@@ -31,6 +31,25 @@ int main(void) {
     cycle = 0;
     
     while (!(mipsIns.eof() && CheckEnding())) {
+        
+        if(((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && ((int)EX_MEM_Reg.RegRd != 0)
+                && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRs))
+            || ((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && ((int)EX_MEM_Reg.RegRd != 0)
+                && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRt)))    
+            {
+                printf("WWWWW\n");
+                Move_With_Stall();
+                cycle++;
+                stage_ins[2]="";
+                fprintf(outputFilePtr, "Cycle %d : \n", cycle);
+                Write_Back();
+                Memory_Read_Write();
+                Instruction_Decode();
+                Instruction_Fetch(insToken);
+                continue;
+            }
+            
+        // printf("?????%d",mipsRegisters[0] );
         if (!mipsIns.eof()) {
             getline(mipsIns, instruction);
             Parse_Instruction(instruction, insToken);
@@ -42,7 +61,7 @@ int main(void) {
         Move_Stages_Instruction(insToken[0]);
 
         
-        // if(MEM_WB_Reg.Ctl_WB.Reg_Write && (MEM_WB_Reg.RegRd!= 0) && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRs))
+        // 
         Write_Back();
         Memory_Read_Write();
         Execute();
