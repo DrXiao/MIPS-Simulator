@@ -31,36 +31,31 @@ int main(void) {
     cycle = 0;
     
     while (!(mipsIns.eof() && CheckEnding())) {
-        if(((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0)
-                && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRs))
-            || ((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0)
-                && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRt)))    
-            {
-                printf("WWWWW\n");
-                Move_With_Stall();
-                cycle++;
-                stage_ins[2]="";
-                fprintf(outputFilePtr, "Cycle %d : \n", cycle);
-                Write_Back();
-                Memory_Read_Write();
-                Instruction_Decode();
-                Instruction_Fetch(insToken);
-                continue;
-            }
+        // if(((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0)
+        //         && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRs))
+        //     || ((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0)
+        //         && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRt)))    
             
-        // printf("?????%d",mipsRegisters[0] );
+            
+        
         if (!mipsIns.eof()) {
             getline(mipsIns, instruction);
             Parse_Instruction(instruction, insToken);
         }
         else
             instruction = insToken[0] = "";
+
+        /*印出來抗抗*/
+        printf("%s rs = %d\n",insToken[0].c_str(),IF_ID_Reg.RegRs);
+        printf("%s rt = %d\n",insToken[0].c_str(),IF_ID_Reg.RegRt);
+        printf("%s rd = %d\n",insToken[0].c_str(),IF_ID_Reg.RegRd);
+        printf("imme = %d\n",IF_ID_Reg.Immediate);
+ 
+ 
         cycle += 1;
         fprintf(outputFilePtr, "Cycle %d : \n", cycle);
         Move_Stages_Instruction(insToken[0]);
-
         
-        // 
         Write_Back();
         Memory_Read_Write();
         Execute();

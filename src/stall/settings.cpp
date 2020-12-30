@@ -48,7 +48,10 @@ void Write_Back(void) {
     if (stage_ins[4] == "") return;
 
     fprintf(outputFilePtr, "\t%s : WB", stage_ins[4].c_str());
-    fprintf(outputFilePtr, " %d%d\n", MEM_WB_Reg.Ctl_WB.Reg_Write,
+    if(stage_ins[4] == SW || stage_ins[4] == BEQ){
+        fprintf(outputFilePtr, " %dX\n", MEM_WB_Reg.Ctl_WB.Reg_Write);
+    }
+    else fprintf(outputFilePtr, " %d%d\n", MEM_WB_Reg.Ctl_WB.Reg_Write,
             MEM_WB_Reg.Ctl_WB.MemToReg);
 
     if (MEM_WB_Reg.Ctl_WB.Reg_Write) {
@@ -181,6 +184,7 @@ void Instruction_Decode(void) {
 void Instruction_Fetch(string insToken[4]) {
     if (insToken[0] == "") return;
     fprintf(outputFilePtr, "\t%s : IF\n", stage_ins[0].c_str());
+    IF_ID_Reg = {.OpCode = "", .RegRs = 0, .RegRt = 0, .RegRd = 0, .Immediate = 0};
     IF_ID_Reg.OpCode = insToken[0];
     if (insToken[0] == LW || insToken[0] == SW) {
         sscanf(insToken[1].c_str(), "$%hu", &IF_ID_Reg.RegRt);
