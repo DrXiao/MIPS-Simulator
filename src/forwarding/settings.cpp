@@ -68,7 +68,7 @@ void Memory_Read_Write(void) {
     Mem_Stage.Address = EX_MEM_Reg.ALU_Result;
     Mem_Stage.WriteData = EX_MEM_Reg.ReadData;
     if (EX_MEM_Reg.Ctl_M.Mem_Read) {
-        MEM_WB_Reg.DataOfMem = memory[EX_MEM_Reg.ALU_Result >> 2];
+        MEM_WB_Reg.DataOfMem = memory[Mem_Stage.Address >> 2];
     }
     else if (EX_MEM_Reg.Ctl_M.Mem_Write) {
         // 檢查一下
@@ -84,14 +84,14 @@ void Execute(void) {
     fprintf(outputFilePtr, " \n");
     
     EX_Stage.Operand_1 = ID_EX_Reg.ReadData1;
-    if (stage_ins[2] == ADD || stage_ins[2] == SUB) {
-        EX_Stage.Operand_2 = ID_EX_Reg.ReadData2;
-    }
-    else {
+    if (ID_EX_Reg.Ctl_Ex.ALUSrc) {
         EX_Stage.Operand_2 = ID_EX_Reg.Immediate;
     }
+    else {
+        EX_Stage.Operand_2 = ID_EX_Reg.ReadData2;
+    }
 
-    if (stage_ins[2] == SUB || stage_ins[2] == BEQ) {
+    if (stage_ins[3] == SUB || stage_ins[3] == BEQ) {
         EX_Stage.ALU_Result = EX_Stage.Operand_1 - EX_Stage.Operand_2;
     }
     else {
@@ -102,9 +102,12 @@ void Execute(void) {
     EX_MEM_Reg.Ctl_WB = ID_EX_Reg.Ctl_WB;
     EX_MEM_Reg.Ctl_M = ID_EX_Reg.Ctl_M;
     EX_MEM_Reg.ALU_Result = EX_Stage.ALU_Result;
-    EX_MEM_Reg.ReadData = EX_Stage.Operand_2;
+    EX_MEM_Reg.ReadData = ID_EX_Reg.ReadData2;
     EX_MEM_Reg.Zero = EX_Stage.Zero;
-    EX_MEM_Reg.RegRd = ID_EX_Reg.RegRd;
+    if (ID_EX_Reg.Ctl_Ex.RegDst)
+        EX_MEM_Reg.RegRd = ID_EX_Reg.RegRd;
+    else 
+        EX_MEM_Reg.RegRd = ID_EX_Reg.RegRt;
 }
 
 void Instruction_Decode(void) {
@@ -133,7 +136,7 @@ void Instruction_Decode(void) {
         ID_EX_Reg.Ctl_Ex = {.RegDst = 0, .ALUOp = 0x00, .ALUSrc = 1};
         ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
         ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
-        ID_EX_Reg.RegRd = IF_ID_Reg.RegRt; // Needs to check
+        ID_EX_Reg.RegRd = IF_ID_Reg.RegRd; // Needs to check
     }
     else if (stage_ins[1] == SW) {
         ID_EX_Reg.Ctl_WB = {.Reg_Write = 0, .MemToReg = 0};
@@ -144,7 +147,7 @@ void Instruction_Decode(void) {
         ID_EX_Reg.Immediate = IF_ID_Reg.Immediate;
         ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
         ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
-        ID_EX_Reg.RegRd = IF_ID_Reg.RegRs; // Needs to check
+        ID_EX_Reg.RegRd = IF_ID_Reg.RegRd; // Needs to check
     }
     else {
         ID_EX_Reg.Ctl_WB = {.Reg_Write = 0, .MemToReg = 0};
@@ -155,7 +158,7 @@ void Instruction_Decode(void) {
         ID_EX_Reg.Immediate = IF_ID_Reg.Immediate;
         ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
         ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
-        ID_EX_Reg.RegRd = IF_ID_Reg.RegRs; // Needs to check
+        ID_EX_Reg.RegRd = IF_ID_Reg.RegRd; // Needs to check
     }
 }
 
@@ -164,9 +167,9 @@ void Instruction_Fetch(string insToken[4]) {
     fprintf(outputFilePtr, "\t%s : IF\n", stage_ins[0].c_str());
     IF_ID_Reg.OpCode = insToken[0];
     if (insToken[0] == LW || insToken[0] == SW) {
-        sscanf(insToken[1].c_str(), "$%hhu", &IF_ID_Reg.RegRs);
+        sscanf(insToken[1].c_str(), "$%hhu", &IF_ID_Reg.RegRt);
         sscanf(insToken[2].c_str(), "%hd($%hhu)", &IF_ID_Reg.Immediate,
-               &IF_ID_Reg.RegRt);
+               &IF_ID_Reg.RegRs);
     }
     else if (insToken[0] == BEQ) {
         sscanf(insToken[1].c_str(), "$%hhu", &IF_ID_Reg.RegRs);
