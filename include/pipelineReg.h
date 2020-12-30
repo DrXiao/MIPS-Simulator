@@ -4,7 +4,6 @@
 #include <string>
 using namespace std;
 
-
 // Slide p.85
 typedef struct control_EX {
     bool RegDst;
@@ -23,13 +22,12 @@ typedef struct control_WB {
     bool MemToReg;
 } control_WB;
 
-
 typedef struct IF_ID_Pipeline_Reg {
     string OpCode; // "lw", "sub", "add", "beq", "sw";
     uint8_t RegRs;
     uint8_t RegRt;
     uint8_t RegRd;
-    int16_t Immediate; 
+    int16_t Immediate;
 } IF_ID_Pipeline_Reg;
 
 typedef struct ID_EX_Pipeline_Reg {

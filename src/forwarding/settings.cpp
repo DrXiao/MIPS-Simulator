@@ -6,7 +6,6 @@
 #include "util.h"
 using namespace std;
 
-
 IF_ID_Pipeline_Reg IF_ID_Reg = {
     .OpCode = "", .RegRs = 0, .RegRt = 0, .RegRd = 0, .Immediate = 0};
 
@@ -45,7 +44,6 @@ Pipeline_MEM_Stage Mem_Stage = {.Address = 0, .WriteData = 0, .ReadData = 0};
 bool stages_bubble[5] = {0};
 string stage_ins[5];
 
-
 void Write_Back(void) {
     if (stage_ins[4] == "") return;
 
@@ -64,7 +62,7 @@ void Memory_Read_Write(void) {
     if (stage_ins[3] == "") return;
     fprintf(outputFilePtr, "\t%s : MEM", stage_ins[3].c_str());
     fprintf(outputFilePtr, " \n");
-    
+
     MEM_WB_Reg.Ctl_WB = EX_MEM_Reg.Ctl_WB;
     Mem_Stage.Address = EX_MEM_Reg.ALU_Result;
     Mem_Stage.WriteData = EX_MEM_Reg.ReadData;
@@ -83,11 +81,9 @@ void Execute(void) {
     if (stage_ins[2] == "") return;
     fprintf(outputFilePtr, "\t%s : EX", stage_ins[2].c_str());
     fprintf(outputFilePtr, " \n");
-    
+
     EX_Stage.Operand_1 = ID_EX_Reg.ReadData1;
-    if (ID_EX_Reg.Ctl_Ex.ALUSrc) {
-        EX_Stage.Operand_2 = ID_EX_Reg.Immediate;
-    }
+    if (ID_EX_Reg.Ctl_Ex.ALUSrc) { EX_Stage.Operand_2 = ID_EX_Reg.Immediate; }
     else {
         EX_Stage.Operand_2 = ID_EX_Reg.ReadData2;
     }
@@ -107,7 +103,7 @@ void Execute(void) {
     EX_MEM_Reg.Zero = EX_Stage.Zero;
     if (ID_EX_Reg.Ctl_Ex.RegDst)
         EX_MEM_Reg.RegRd = ID_EX_Reg.RegRd;
-    else 
+    else
         EX_MEM_Reg.RegRd = ID_EX_Reg.RegRt;
 }
 
@@ -153,7 +149,7 @@ void Instruction_Decode(void) {
     else {
         ID_EX_Reg.Ctl_WB = {.Reg_Write = 0, .MemToReg = 0};
         ID_EX_Reg.Ctl_M = {.Branch = 1, .Mem_Read = 0, .Mem_Write = 0};
-        ID_EX_Reg.Ctl_Ex = {.RegDst = 0,.ALUOp = 0x01, .ALUSrc = 0};
+        ID_EX_Reg.Ctl_Ex = {.RegDst = 0, .ALUOp = 0x01, .ALUSrc = 0};
         ID_EX_Reg.ReadData1 = ID_Stage.ReadData1;
         ID_EX_Reg.ReadData2 = ID_Stage.ReadData2;
         ID_EX_Reg.Immediate = IF_ID_Reg.Immediate;

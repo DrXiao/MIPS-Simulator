@@ -55,6 +55,6 @@ int main(void) {
 #if (OUTPUT_FILE_OPEN == 1)
     fclose(outputFilePtr);
 #endif
-    //PAUSE;
+    // PAUSE;
     return 0;
 }

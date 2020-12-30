@@ -19,22 +19,22 @@ void Init_Reg_Mem(void) {
 }
 
 void Print_Reg_Mem(FILE *outputFilePtr) {
-    for(int idxOfReg = 0; idxOfReg < 32 ; idxOfReg++) {
-        fprintf(outputFilePtr ," $%-*d", OUTPUT_FIELD, idxOfReg);
+    for (int idxOfReg = 0; idxOfReg < 32; idxOfReg++) {
+        fprintf(outputFilePtr, " $%-*d", OUTPUT_FIELD, idxOfReg);
     }
-    fprintf(outputFilePtr ,"\n");
-    for(int idxOfReg = 0; idxOfReg < 32 ; idxOfReg++) {
-        fprintf(outputFilePtr ,"  %-*d", OUTPUT_FIELD, mipsRegisters[idxOfReg]);
+    fprintf(outputFilePtr, "\n");
+    for (int idxOfReg = 0; idxOfReg < 32; idxOfReg++) {
+        fprintf(outputFilePtr, "  %-*d", OUTPUT_FIELD, mipsRegisters[idxOfReg]);
     }
-    fprintf(outputFilePtr ,"\n\n");
-    for(int idxOfMem = 0; idxOfMem < 32 ; idxOfMem++) {
-        fprintf(outputFilePtr ," W%-*d", OUTPUT_FIELD, idxOfMem);
+    fprintf(outputFilePtr, "\n\n");
+    for (int idxOfMem = 0; idxOfMem < 32; idxOfMem++) {
+        fprintf(outputFilePtr, " W%-*d", OUTPUT_FIELD, idxOfMem);
     }
-    fprintf(outputFilePtr ,"\n");
-    for(int idxOfMem = 0; idxOfMem < 32 ; idxOfMem++) {
-        fprintf(outputFilePtr ,"  %-*d", OUTPUT_FIELD, memory[idxOfMem]);
+    fprintf(outputFilePtr, "\n");
+    for (int idxOfMem = 0; idxOfMem < 32; idxOfMem++) {
+        fprintf(outputFilePtr, "  %-*d", OUTPUT_FIELD, memory[idxOfMem]);
     }
-    fprintf(outputFilePtr ,"\n");
+    fprintf(outputFilePtr, "\n");
 }
 
 void Parse_Instruction(string &instruction, string insToken[4]) {
@@ -44,20 +44,18 @@ void Parse_Instruction(string &instruction, string insToken[4]) {
     }
     stringstream strStream(instruction);
     strStream >> insToken[0] >> insToken[1] >> insToken[2] >> insToken[3];
-
 }
 
 void Move_Stages_Instruction(string &Next_New_Instruction) {
-    for(int stages_ins_idx = 4; stages_ins_idx > 0 ; stages_ins_idx--) {
+    for (int stages_ins_idx = 4; stages_ins_idx > 0; stages_ins_idx--) {
         stage_ins[stages_ins_idx] = stage_ins[stages_ins_idx - 1];
     }
     stage_ins[0] = Next_New_Instruction;
 }
 
 bool CheckEnding(void) {
-    for(int stages_ins_idx = 0 ; stages_ins_idx < 4 ; stages_ins_idx++) {
-        if(stage_ins[stages_ins_idx] != "")
-            return false;
+    for (int stages_ins_idx = 0; stages_ins_idx < 4; stages_ins_idx++) {
+        if (stage_ins[stages_ins_idx] != "") return false;
     }
     return true;
 }

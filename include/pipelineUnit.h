@@ -35,5 +35,4 @@ extern Pipeline_ID_Stage ID_Stage;
 extern Pipeline_EX_Stage EX_Stage;
 extern Pipeline_MEM_Stage Mem_Stage;
 
-
 #endif
