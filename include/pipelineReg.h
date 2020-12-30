@@ -4,6 +4,8 @@
 #include <string>
 using namespace std;
 
+
+// Slide p.85
 typedef struct control_EX {
     bool RegDst;
     uint8_t ALUOp;
@@ -21,8 +23,9 @@ typedef struct control_WB {
     bool MemToReg;
 } control_WB;
 
+
 typedef struct IF_ID_Pipeline_Reg {
-    string OpCode;
+    string OpCode; // "lw", "sub", "add", "beq", "sw";
     uint8_t RegRs;
     uint8_t RegRt;
     uint8_t RegRd;

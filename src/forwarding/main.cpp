@@ -29,6 +29,7 @@ int main(void) {
     mipsIns.open("memory.txt", ios::in);
 
     cycle = 0;
+
     while (!(mipsIns.eof() && CheckEnding())) {
         if (!mipsIns.eof()) {
             getline(mipsIns, instruction);
@@ -39,6 +40,7 @@ int main(void) {
         cycle += 1;
         fprintf(outputFilePtr, "Cycle %d : \n", cycle);
         Move_Stages_Instruction(insToken[0]);
+
         Write_Back();
         Memory_Read_Write();
         Execute();

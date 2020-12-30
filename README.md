@@ -3,5 +3,9 @@
 ## Basic enviornment
 * C++ compiler : g++
 * Command ：
-    * Windows ：```g++ -g -o main.exe (All cpp files)```
-    * Linux ：```g++ -g -o main *.cpp```
+    * Windows ：
+        * ```$ make win_forwarding``` (Forwarding Program)
+        * ```$ make win_stall```      (Stall Program)
+    * Linux ：
+        * ```$ make forwarding```     (Forwarding Program)
+        * ```$ make stall```          (Stall Program)

@@ -44,6 +44,7 @@ Pipeline_MEM_Stage Mem_Stage = {.Address = 0, .WriteData = 0, .ReadData = 0};
 bool stages_bubble[5] = {0};
 string stage_ins[5];
 
+
 void Write_Back(void) {
     if (stage_ins[4] == "") return;
 
@@ -62,11 +63,15 @@ void Memory_Read_Write(void) {
     if (stage_ins[3] == "") return;
     fprintf(outputFilePtr, "\t%s : MEM", stage_ins[3].c_str());
     fprintf(outputFilePtr, " \n");
+    
     MEM_WB_Reg.Ctl_WB = EX_MEM_Reg.Ctl_WB;
+    Mem_Stage.Address = EX_MEM_Reg.ALU_Result;
+    Mem_Stage.WriteData;
     if (EX_MEM_Reg.Ctl_M.Mem_Read) {
         MEM_WB_Reg.DataOfMem = memory[EX_MEM_Reg.ALU_Result >> 2];
     }
     else if (EX_MEM_Reg.Ctl_M.Mem_Write) {
+        // 檢查一下
         memory[EX_MEM_Reg.ALU_Result >> 2] = mipsRegisters[EX_MEM_Reg.RegRd];
     }
     MEM_WB_Reg.ALU_Result = EX_MEM_Reg.ALU_Result;
@@ -77,16 +82,16 @@ void Execute(void) {
     if (stage_ins[2] == "") return;
     fprintf(outputFilePtr, "\t%s : EX", stage_ins[2].c_str());
     fprintf(outputFilePtr, " \n");
-    // TODO : Executing ALU.
+    
     EX_Stage.Operand_1 = ID_EX_Reg.ReadData1;
-    if (stage_ins[2] == "add" || stage_ins[2] == "sub") {
+    if (stage_ins[2] == ADD || stage_ins[2] == SUB) {
         EX_Stage.Operand_2 = ID_EX_Reg.ReadData2;
     }
     else {
         EX_Stage.Operand_2 = ID_EX_Reg.Immediate;
     }
 
-    if (stage_ins[2] == "sub" || stage_ins[2] == "beq") {
+    if (stage_ins[2] == SUB || stage_ins[2] == BEQ) {
         EX_Stage.ALU_Result = EX_Stage.Operand_1 - EX_Stage.Operand_2;
     }
     else {
@@ -99,8 +104,6 @@ void Execute(void) {
     EX_MEM_Reg.ALU_Result = EX_Stage.ALU_Result;
     EX_MEM_Reg.Zero = EX_Stage.Zero;
     EX_MEM_Reg.RegRd = ID_EX_Reg.RegRd;
-
-    return;
 }
 
 void Instruction_Decode(void) {
@@ -116,8 +119,8 @@ void Instruction_Decode(void) {
         ID_EX_Reg.Ctl_WB = {.Reg_Write = 1, .MemToReg = 0};
         ID_EX_Reg.Ctl_M = {.Branch = 0, .Mem_Read = 0, .Mem_Write = 0};
         ID_EX_Reg.Ctl_Ex = {.RegDst = 1, .ALUOp = 0x02, .ALUSrc = 0};
-        ID_EX_Reg.ReadData1 = mipsRegisters[IF_ID_Reg.RegRs];
-        ID_EX_Reg.ReadData2 = mipsRegisters[IF_ID_Reg.RegRt];
+        ID_EX_Reg.ReadData1 = ID_Stage.ReadData1;
+        ID_EX_Reg.ReadData2 = ID_Stage.ReadData2;
         ID_EX_Reg.Immediate = IF_ID_Reg.Immediate;
         ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
         ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
@@ -129,25 +132,25 @@ void Instruction_Decode(void) {
         ID_EX_Reg.Ctl_Ex = {.RegDst = 0, .ALUOp = 0x00, .ALUSrc = 1};
         ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
         ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
-        ID_EX_Reg.RegRd = IF_ID_Reg.RegRs; // Needs to check
+        ID_EX_Reg.RegRd = IF_ID_Reg.RegRt; // Needs to check
     }
     else if (stage_ins[1] == SW) {
-        ID_EX_Reg.Ctl_WB = {.Reg_Write = 0};
+        ID_EX_Reg.Ctl_WB = {.Reg_Write = 0, .MemToReg = 0};
         ID_EX_Reg.Ctl_M = {.Branch = 0, .Mem_Read = 0, .Mem_Write = 1};
-        ID_EX_Reg.Ctl_Ex = {.ALUOp = 0x00, .ALUSrc = 1};
-        ID_EX_Reg.ReadData1 = mipsRegisters[IF_ID_Reg.RegRs];
-        ID_EX_Reg.ReadData2 = mipsRegisters[IF_ID_Reg.RegRt];
+        ID_EX_Reg.Ctl_Ex = {.RegDst = 0, .ALUOp = 0x00, .ALUSrc = 1};
+        ID_EX_Reg.ReadData1 = ID_Stage.ReadData1;
+        ID_EX_Reg.ReadData2 = ID_Stage.ReadData2;
         ID_EX_Reg.Immediate = IF_ID_Reg.Immediate;
         ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
         ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
         ID_EX_Reg.RegRd = IF_ID_Reg.RegRs; // Needs to check
     }
     else {
-        ID_EX_Reg.Ctl_WB = {.Reg_Write = 0};
+        ID_EX_Reg.Ctl_WB = {.Reg_Write = 0, .MemToReg = 0};
         ID_EX_Reg.Ctl_M = {.Branch = 1, .Mem_Read = 0, .Mem_Write = 0};
-        ID_EX_Reg.Ctl_Ex = {.ALUOp = 0x01, .ALUSrc = 0};
-        ID_EX_Reg.ReadData1 = mipsRegisters[IF_ID_Reg.RegRs];
-        ID_EX_Reg.ReadData2 = mipsRegisters[IF_ID_Reg.RegRt];
+        ID_EX_Reg.Ctl_Ex = {.RegDst = 0,.ALUOp = 0x01, .ALUSrc = 0};
+        ID_EX_Reg.ReadData1 = ID_Stage.ReadData1;
+        ID_EX_Reg.ReadData2 = ID_Stage.ReadData2;
         ID_EX_Reg.Immediate = IF_ID_Reg.Immediate;
         ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
         ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
@@ -167,7 +170,7 @@ void Instruction_Fetch(string insToken[4]) {
     else if (insToken[0] == BEQ) {
         sscanf(insToken[1].c_str(), "$%hhu", &IF_ID_Reg.RegRs);
         sscanf(insToken[2].c_str(), "$%hhu", &IF_ID_Reg.RegRt);
-        IF_ID_Reg.Immediate = stoul(insToken[3]);
+        IF_ID_Reg.Immediate = stol(insToken[3]);
     }
     else {
         sscanf(insToken[1].c_str(), "$%hhu", &IF_ID_Reg.RegRd);
