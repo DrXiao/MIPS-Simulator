@@ -1,0 +1,40 @@
+Cycle 1 : 
+	lw : IF
+Cycle 2 : 
+	lw : ID
+	lw : IF
+Cycle 3 : 
+	lw : EX 
+	lw : ID
+	add : IF
+Cycle 4 : 
+	lw : MEM 
+	lw : EX 
+	add : ID
+	sw : IF
+Cycle 5 : 
+	lw : WB 1 1
+	lw : MEM 
+	add : EX 
+	sw : ID
+	beq : IF
+Cycle 6 : 
+	lw : WB 1 1
+	add : MEM 
+	sw : EX 
+	beq : ID
+Cycle 7 : 
+	add : WB 1 0
+	sw : MEM 
+	beq : EX 
+Cycle 8 : 
+	sw : WB 0 0
+	beq : MEM 
+Cycle 9 : 
+	beq : WB 0 0
+MIPS code needs 9 cycles
+ $0   $1   $2   $3   $4   $5   $6   $7   $8   $9   $10  $11  $12  $13  $14  $15  $16  $17  $18  $19  $20  $21  $22  $23  $24  $25  $26  $27  $28  $29  $30  $31 
+  2    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1  
+
+ W0   W1   W2   W3   W4   W5   W6   W7   W8   W9   W10  W11  W12  W13  W14  W15  W16  W17  W18  W19  W20  W21  W22  W23  W24  W25  W26  W27  W28  W29  W30  W31 
+  1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1  
