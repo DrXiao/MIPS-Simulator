@@ -12,7 +12,7 @@ using namespace std;
     printf("Press any key to continue...");                                    \
     cin.get();
 
-#define OUTPUT_FILE_OPEN 1
+#define OUTPUT_FILE_OPEN 0
 
 int main(void) {
 
