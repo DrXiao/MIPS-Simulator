@@ -5,7 +5,6 @@
 
 #include "pipelineReg.h"
 #include "util.h"
-#include "forwarding/forwarding.h"
 using namespace std;
 
 #define PAUSE                                                                  \

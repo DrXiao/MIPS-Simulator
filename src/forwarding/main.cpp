@@ -5,7 +5,7 @@
 
 #include "pipelineReg.h"
 #include "util.h"
-#include "forwarding/forwarding.h"
+#include "forwarding.h"
 using namespace std;
 
 #define PAUSE                                                                  \
@@ -13,6 +13,9 @@ using namespace std;
     cin.get();
 
 #define OUTPUT_FILE_OPEN 0
+
+string instruction = "";
+string insToken[4] = {"", "", "", ""};
 
 int main(void) {
 
@@ -22,10 +25,6 @@ int main(void) {
     outputFilePtr = fopen("result.txt", "w");
 #endif
 
-    string instruction = "";
-    string insToken[4] = {"", "", "", ""};
-
-    fstream mipsIns;
     mipsIns.open("memory.txt", ios::in);
 
     cycle = 0;
@@ -37,9 +36,13 @@ int main(void) {
         }
         else
             instruction = insToken[0] = "";
+        if (cycle > 15)
+            break;
         cycle += 1;
         fprintf(outputFilePtr, "Cycle %d : \n", cycle);
         Move_Stages_Instruction(insToken[0]);
+        Load_Use_Forwarding();
+        CheckHazard();
 
         Write_Back();
         Memory_Read_Write();

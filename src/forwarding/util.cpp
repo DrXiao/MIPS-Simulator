@@ -1,13 +1,17 @@
 #include "util.h"
+#include "forwarding.h"
+#include "pipelineReg.h"
 #include <cstdio>
 #include <iomanip>
 #include <string>
+#include <cstring>
 using namespace std;
 #define OUTPUT_FIELD 3
 
 int mipsRegisters[32] = {0};
 int memory[32] = {0};
 
+fstream mipsIns;
 FILE *outputFilePtr = stdout;
 int cycle = 0;
 
@@ -49,6 +53,10 @@ void Parse_Instruction(string &instruction, string insToken[4]) {
 void Move_Stages_Instruction(string &Next_New_Instruction) {
     for (int stages_ins_idx = 4; stages_ins_idx > 0; stages_ins_idx--) {
         stage_ins[stages_ins_idx] = stage_ins[stages_ins_idx - 1];
+        if (Load_Use_Hazard && stages_ins_idx == 3) {
+            stage_ins[stages_ins_idx - 1] = "";
+            return;
+        }
     }
     stage_ins[0] = Next_New_Instruction;
 }
@@ -58,4 +66,17 @@ bool CheckEnding(void) {
         if (stage_ins[stages_ins_idx] != "") return false;
     }
     return true;
+}
+
+void Instruction_Backtrack(int lines) {
+    if (lines == 0)
+        return;
+    int offset = lines > 0 ? 1 : -1;
+    lines = lines < 0 ? -lines + 1 : lines;
+    while (lines) {
+        mipsIns.seekg(offset, mipsIns.cur);
+        if (mipsIns.peek() == '\n');
+            lines--;
+    }
+    mipsIns.seekg(1, mipsIns.cur);
 }
