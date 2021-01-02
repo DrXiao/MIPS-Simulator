@@ -31,8 +31,18 @@ typedef struct Pipeline_MEM_Stage {
     int32_t ReadData;
 } Pipeline_MEM_Stage;
 
+typedef struct Pipeline_WB_Stage {
+    // WB inputs
+    int32_t DataOfMem;
+    int32_t ALU_Result;
+
+    // WB outputs
+    int32_t WriteBackData;
+} Pipeline_WB_Stage;
+
 extern Pipeline_ID_Stage ID_Stage;
 extern Pipeline_EX_Stage EX_Stage;
 extern Pipeline_MEM_Stage Mem_Stage;
+extern Pipeline_WB_Stage WB_Stage;
 
 #endif

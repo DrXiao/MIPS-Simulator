@@ -26,24 +26,29 @@ int main(void) {
 #endif
 
     mipsIns.open("memory.txt", ios::in);
+    prevIns.open("memory.txt", ios::in);
 
     cycle = 0;
 
-    while (!(mipsIns.eof() && CheckEnding())) {
-        if (!mipsIns.eof()) {
+    while (mipsIns.eof() == false || CheckEnding() == false) {
+        cycle += 1;
+        if (Load_Use_Hazard)
+            Instruction_Backtrack(-1);
+        if (mipsIns.eof() == false) {
+            prevIns.seekg(mipsIns.tellg());
             getline(mipsIns, instruction);
             Parse_Instruction(instruction, insToken);
         }
         else
             instruction = insToken[0] = "";
-        if (cycle > 15)
-            break;
-        cycle += 1;
+        cout << prevIns.tellg() << " " << mipsIns.tellg() << endl;
+        if (cycle > 15) break;
         fprintf(outputFilePtr, "Cycle %d : \n", cycle);
         Move_Stages_Instruction(insToken[0]);
         Load_Use_Forwarding();
         CheckHazard();
 
+        if (Load_Use_Hazard) printf("Hazard!\n");
         Write_Back();
         Memory_Read_Write();
         Execute();
@@ -51,6 +56,7 @@ int main(void) {
         Instruction_Fetch(insToken);
     }
     mipsIns.close();
+    prevIns.close();
 
     fprintf(outputFilePtr, "MIPS code needs %d cycles\n", cycle);
     Print_Reg_Mem(outputFilePtr);

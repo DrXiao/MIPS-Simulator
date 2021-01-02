@@ -10,6 +10,7 @@
 using namespace std;
 
 extern fstream mipsIns;
+extern fstream prevIns;
 extern string instruction;
 extern string insToken[4];
 

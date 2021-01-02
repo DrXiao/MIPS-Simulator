@@ -43,6 +43,9 @@ Pipeline_EX_Stage EX_Stage = {
 
 Pipeline_MEM_Stage Mem_Stage = {.Address = 0, .WriteData = 0, .ReadData = 0};
 
+Pipeline_WB_Stage WB_Stage = {
+    .DataOfMem = 0, .ALU_Result = 0, .WriteBackData = 0};
+
 string stage_ins[5];
 
 void Write_Back(void) {
@@ -52,10 +55,13 @@ void Write_Back(void) {
     fprintf(outputFilePtr, " %d %d\n", MEM_WB_Reg.Ctl_WB.Reg_Write,
             MEM_WB_Reg.Ctl_WB.MemToReg);
 
+    WB_Stage.DataOfMem = MEM_WB_Reg.DataOfMem;
+    WB_Stage.ALU_Result = MEM_WB_Reg.ALU_Result;
+    WB_Stage.WriteBackData = MEM_WB_Reg.Ctl_WB.MemToReg ? MEM_WB_Reg.DataOfMem
+                                                        : MEM_WB_Reg.ALU_Result;
+
     if (MEM_WB_Reg.Ctl_WB.Reg_Write) {
-        mipsRegisters[MEM_WB_Reg.RegRd] = MEM_WB_Reg.Ctl_WB.MemToReg
-                                              ? MEM_WB_Reg.DataOfMem
-                                              : MEM_WB_Reg.ALU_Result;
+        mipsRegisters[MEM_WB_Reg.RegRd] = WB_Stage.WriteBackData;
     }
 }
 
@@ -139,8 +145,10 @@ void Instruction_Decode(void) {
         ID_EX_Reg.Ctl_Ex = {.RegDst = 0, .ALUOp = 0x00, .ALUSrc = 1};
         ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
         ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
-        ID_EX_Reg.RegRd = IF_ID_Reg.RegRd; // Needs to check
+        ID_EX_Reg.RegRd = IF_ID_Reg.RegRt; // Needs to check
         ID_EX_Reg.Immediate = (int32_t)IF_ID_Reg.Immediate;
+        ID_EX_Reg.ReadData1 = ID_Stage.ReadData1;
+        ID_EX_Reg.ReadData2 = ID_Stage.ReadData2;
     }
     else if (stage_ins[1] == SW) {
         ID_EX_Reg.Ctl_WB = {.Reg_Write = 0, .MemToReg = 0};
@@ -151,7 +159,7 @@ void Instruction_Decode(void) {
         ID_EX_Reg.Immediate = (int32_t)IF_ID_Reg.Immediate;
         ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
         ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
-        ID_EX_Reg.RegRd = IF_ID_Reg.RegRd; // Needs to check
+        ID_EX_Reg.RegRd = IF_ID_Reg.RegRt; // Needs to check
     }
     else {
         ID_EX_Reg.Ctl_WB = {.Reg_Write = 0, .MemToReg = 0};

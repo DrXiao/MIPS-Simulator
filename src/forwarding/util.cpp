@@ -2,6 +2,7 @@
 #include "forwarding.h"
 #include "pipelineReg.h"
 #include <cstdio>
+#include <iostream>
 #include <iomanip>
 #include <string>
 #include <cstring>
@@ -12,6 +13,7 @@ int mipsRegisters[32] = {0};
 int memory[32] = {0};
 
 fstream mipsIns;
+fstream prevIns;
 FILE *outputFilePtr = stdout;
 int cycle = 0;
 
@@ -71,6 +73,10 @@ bool CheckEnding(void) {
 void Instruction_Backtrack(int lines) {
     if (lines == 0)
         return;
+    else if (lines == -1) {
+        mipsIns.seekg(prevIns.tellg());
+        cout << mipsIns.tellg() << endl;
+    }
     int offset = lines > 0 ? 1 : -1;
     lines = lines < 0 ? -lines + 1 : lines;
     while (lines) {
