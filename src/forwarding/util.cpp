@@ -7,7 +7,7 @@
 #include <string>
 #include <cstring>
 using namespace std;
-#define OUTPUT_FIELD 3
+#define OUTPUT_FIELD 7
 
 int mipsRegisters[32] = {0};
 int memory[32] = {0};
@@ -55,8 +55,8 @@ void Parse_Instruction(string &instruction, string insToken[4]) {
 void Move_Stages_Instruction(string &Next_New_Instruction) {
     for (int stages_ins_idx = 4; stages_ins_idx > 0; stages_ins_idx--) {
         stage_ins[stages_ins_idx] = stage_ins[stages_ins_idx - 1];
-        if (Load_Use_Hazard && stages_ins_idx == 3) {
-            stage_ins[stages_ins_idx - 1] = "";
+        if (Load_Use_count - 1 == 1 && stages_ins_idx == 3) {
+            stage_ins[--stages_ins_idx] = "";
             return;
         }
     }
@@ -74,7 +74,10 @@ void Instruction_Backtrack(int lines) {
     if (lines == 0)
         return;
     else if (lines == -1) {
+        mipsIns.setstate(prevIns.rdstate());
+        mipsIns.seekg(mipsIns.beg);
         mipsIns.seekg(prevIns.tellg());
+        cout << prevIns.tellg() << endl;
         cout << mipsIns.tellg() << endl;
     }
     int offset = lines > 0 ? 1 : -1;

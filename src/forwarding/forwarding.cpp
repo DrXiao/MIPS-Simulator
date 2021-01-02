@@ -24,43 +24,57 @@ bool Branch_Hazard = 0;
 
 using namespace std;
 
-void CheckHazard(void) {
+int Load_Use_count = 0;
+
+void Check_EX_And_MEM_Hazard(void) {
     // EX hazard
-    if (EX_HAZARD(Rs)) { ID_EX_Reg.ReadData1 = EX_MEM_Reg.ALU_Result; }
+    if (EX_HAZARD(Rs)) { 
+        ID_EX_Reg.ReadData1 = EX_MEM_Reg.ALU_Result; 
+    }
     // Mem hazard
     else if (MEM_HAZARD(Rs)) {
-        ID_EX_Reg.ReadData1 = MEM_WB_Reg.ALU_Result;
+        ID_EX_Reg.ReadData1 = WB_Stage.WriteBackData;
     }
 
     // EX hazard
     if (EX_HAZARD(Rt)) { ID_EX_Reg.ReadData2 = EX_MEM_Reg.ALU_Result; }
     // Mem hazard
     else if (MEM_HAZARD(Rt)) {
-        ID_EX_Reg.ReadData2 = MEM_WB_Reg.ALU_Result;
+        ID_EX_Reg.ReadData2 = WB_Stage.WriteBackData;
     }
 
+}
+
+void Check_Load_Use_Hazard(void) {
     // Load-Use hazard
-    if (LOAD_USE_HAZARD(Rs)) {
+    if (Load_Use_count == 0 && LOAD_USE_HAZARD(Rs)) {
         Load_Use_Hazard = 1;
         Load_Use_Hazard_Forwarding_Rs = 1;
+        Load_Use_count = 2;
     }
-    if (LOAD_USE_HAZARD(Rt)) {
+    if (Load_Use_count == 0 && LOAD_USE_HAZARD(Rt)) {
         Load_Use_Hazard = 1;
         Load_Use_Hazard_Forwarding_Rt = 1;
+        Load_Use_count = 2;
+        
     }
-
-    // Branch hazard
 }
 
 void Load_Use_Forwarding(void) {
-    if (Load_Use_Hazard) {
+    if (Load_Use_count - 1 == 0) {
         if (Load_Use_Hazard_Forwarding_Rs)
-            ID_EX_Reg.ReadData1 = WB_Stage.WriteBackData;
+            ID_EX_Reg.ReadData1 = MEM_WB_Reg.DataOfMem;
         if (Load_Use_Hazard_Forwarding_Rt)
-            ID_EX_Reg.ReadData2 = WB_Stage.WriteBackData;
-
-        Load_Use_Hazard_Forwarding_Rs = Load_Use_Hazard_Forwarding_Rt = 0;
-        memset(&ID_EX_Reg, 0, sizeof(ID_EX_Reg));
+            ID_EX_Reg.ReadData2 = MEM_WB_Reg.DataOfMem;
         Load_Use_Hazard = 0;
+    }
+    Load_Use_count = Load_Use_count == 0 ? 0 : Load_Use_count - 1;
+}
+
+void Load_Use_Hazard_Flush(void) {
+    if (Load_Use_count - 1 == 1) {
+        memset(&ID_EX_Reg.Ctl_WB, 0, sizeof(ID_EX_Reg.Ctl_WB));
+        memset(&ID_EX_Reg.Ctl_M, 0, sizeof(ID_EX_Reg.Ctl_M));
+        memset(&ID_EX_Reg.Ctl_Ex, 0, sizeof(ID_EX_Reg.Ctl_Ex));
     }
 }

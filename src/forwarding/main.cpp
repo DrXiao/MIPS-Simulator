@@ -32,28 +32,27 @@ int main(void) {
 
     while (mipsIns.eof() == false || CheckEnding() == false) {
         cycle += 1;
-        if (Load_Use_Hazard)
-            Instruction_Backtrack(-1);
         if (mipsIns.eof() == false) {
-            prevIns.seekg(mipsIns.tellg());
-            getline(mipsIns, instruction);
-            Parse_Instruction(instruction, insToken);
+            if (Load_Use_count - 1 != 1) {
+                prevIns.seekg(mipsIns.tellg());
+                getline(mipsIns, instruction);
+                Parse_Instruction(instruction, insToken);
+            }
         }
         else
             instruction = insToken[0] = "";
-        cout << prevIns.tellg() << " " << mipsIns.tellg() << endl;
         if (cycle > 15) break;
         fprintf(outputFilePtr, "Cycle %d : \n", cycle);
         Move_Stages_Instruction(insToken[0]);
+        Check_EX_And_MEM_Hazard();
         Load_Use_Forwarding();
-        CheckHazard();
-
-        if (Load_Use_Hazard) printf("Hazard!\n");
+        Check_Load_Use_Hazard();
         Write_Back();
         Memory_Read_Write();
         Execute();
         Instruction_Decode();
         Instruction_Fetch(insToken);
+        Load_Use_Hazard_Flush();
     }
     mipsIns.close();
     prevIns.close();
@@ -67,3 +66,27 @@ int main(void) {
     // PAUSE;
     return 0;
 }
+
+
+/*
+
+0
+0000 0000  0000 0000  0000 0000  0000 0001
+
+1
+0000 0000  0000 0000  0000 0000  0000 0001
+
+2
+0000 0000  0000 0000  0000 0000  0000 0001
+
+3
+0000 0000  0000 0000  0000 0000  0000 0001
+
+4
+0000 0000  0000 0000  0000 0000  0000 0001
+
+5
+0000 0000  0000 0000  0000 0000  0000 0001
+
+
+*/
