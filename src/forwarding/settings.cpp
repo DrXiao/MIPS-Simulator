@@ -77,12 +77,12 @@ void Memory_Read_Write(void) {
     Mem_Stage.Address = EX_MEM_Reg.ALU_Result;
     Mem_Stage.WriteData = EX_MEM_Reg.ReadData;
     if (EX_MEM_Reg.Ctl_M.Mem_Read) {
-        printf("%d %d\n", Mem_Stage.Address, Mem_Stage.Address >> 2);
+        //printf("%d %d\n", Mem_Stage.Address, Mem_Stage.Address >> 2);
         MEM_WB_Reg.DataOfMem = *(int32_t *)(memoryPtr + Mem_Stage.Address);
     }
     else if (EX_MEM_Reg.Ctl_M.Mem_Write) {
         // 檢查一下
-        printf("%d %d\n", Mem_Stage.Address, Mem_Stage.Address >> 2);
+        //printf("%d %d\n", Mem_Stage.Address, Mem_Stage.Address >> 2);
         *(int32_t *)(memoryPtr + Mem_Stage.Address) = Mem_Stage.WriteData;
     }
     MEM_WB_Reg.ALU_Result = EX_MEM_Reg.ALU_Result;
@@ -183,36 +183,28 @@ void Instruction_Decode(void) {
 }
 
 void Instruction_Fetch(string insToken[4]) {
-    static bool IF_Load_Use_Hazard_Happen = 0;
     if (stage_ins[0] == "") return;
     fprintf(outputFilePtr, "\t%s : IF\n", stage_ins[0].c_str());
 
-    if (!IF_Load_Use_Hazard_Happen) {
-        IF_Stage.tokens[0] = insToken[0];
-        IF_Stage.tokens[1] = insToken[1];
-        IF_Stage.tokens[2] = insToken[2];
-        IF_Stage.tokens[3] = insToken[3];
-    }
-    if (Load_Use_Hazard && IF_Load_Use_Hazard_Happen == 0) {
-        IF_Load_Use_Hazard_Happen = 1;
+    if (Load_Use_Hazard) {
         return;
     }
 
-    IF_Load_Use_Hazard_Happen = 0;
-    IF_ID_Reg.OpCode = IF_Stage.tokens[0];
-    if (IF_Stage.tokens[0] == LW || IF_Stage.tokens[0] == SW) {
-        sscanf(IF_Stage.tokens[1].c_str(), "$%hu", &IF_ID_Reg.RegRt);
-        sscanf(IF_Stage.tokens[2].c_str(), "%hd($%hu)", &IF_ID_Reg.Immediate,
+
+    IF_ID_Reg.OpCode = insToken[0];
+    if (insToken[0] == LW || insToken[0] == SW) {
+        sscanf(insToken[1].c_str(), "$%hu", &IF_ID_Reg.RegRt);
+        sscanf(insToken[2].c_str(), "%hd($%hu)", &IF_ID_Reg.Immediate,
                &IF_ID_Reg.RegRs);
     }
-    else if (IF_Stage.tokens[0] == BEQ) {
-        sscanf(IF_Stage.tokens[1].c_str(), "$%hu", &IF_ID_Reg.RegRs);
-        sscanf(IF_Stage.tokens[2].c_str(), "$%hu", &IF_ID_Reg.RegRt);
-        IF_ID_Reg.Immediate = stol(IF_Stage.tokens[3]);
+    else if (insToken[0] == BEQ) {
+        sscanf(insToken[1].c_str(), "$%hu", &IF_ID_Reg.RegRs);
+        sscanf(insToken[2].c_str(), "$%hu", &IF_ID_Reg.RegRt);
+        IF_ID_Reg.Immediate = stol(insToken[3]);
     }
     else {
-        sscanf(IF_Stage.tokens[1].c_str(), "$%hu", &IF_ID_Reg.RegRd);
-        sscanf(IF_Stage.tokens[2].c_str(), "$%hu", &IF_ID_Reg.RegRs);
-        sscanf(IF_Stage.tokens[3].c_str(), "$%hu", &IF_ID_Reg.RegRt);
+        sscanf(insToken[1].c_str(), "$%hu", &IF_ID_Reg.RegRd);
+        sscanf(insToken[2].c_str(), "$%hu", &IF_ID_Reg.RegRs);
+        sscanf(insToken[3].c_str(), "$%hu", &IF_ID_Reg.RegRt);
     }
 }
