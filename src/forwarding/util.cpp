@@ -7,7 +7,7 @@
 #include <string>
 #include <cstring>
 using namespace std;
-#define OUTPUT_FIELD 7
+#define OUTPUT_FIELD 5
 
 int mipsRegisters[32] = {0};
 int memory[32] = {0};
