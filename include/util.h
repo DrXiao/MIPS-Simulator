@@ -10,6 +10,8 @@ using namespace std;
 
 extern FILE *outputFilePtr;
 extern int cycle;
+extern bool hazard_EX_MEM;
+extern bool hazard_MEM_WB;
 
 extern int mipsRegisters[32];
 extern int memory[32];
@@ -36,8 +38,5 @@ void Parse_Instruction(string &, string[4]);
 void Move_Stages_Instruction(string &);
 
 bool CheckEnding(void);
-
-// 亂寫ㄉ
-void Move_With_Stall(void);
 
 #endif
