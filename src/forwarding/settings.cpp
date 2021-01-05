@@ -54,7 +54,10 @@ void Write_Back(void) {
 
     if (stage_ins[4] == "") return;
     fprintf(outputFilePtr, "\t%s : WB", stage_ins[4].c_str());
-    fprintf(outputFilePtr, " %d %d\n", MEM_WB_Reg.Ctl_WB.Reg_Write,
+    if(stage_ins[4] == SW || stage_ins[4] == BEQ){
+        fprintf(outputFilePtr, " %dX\n", MEM_WB_Reg.Ctl_WB.Reg_Write);
+    }
+    else fprintf(outputFilePtr, " %d%d\n", MEM_WB_Reg.Ctl_WB.Reg_Write,
             MEM_WB_Reg.Ctl_WB.MemToReg);
 
     WB_Stage.DataOfMem = MEM_WB_Reg.DataOfMem;
@@ -71,7 +74,14 @@ void Memory_Read_Write(void) {
     static uint8_t *memoryPtr = (uint8_t *)memory;
     if (stage_ins[3] == "") return;
     fprintf(outputFilePtr, "\t%s : MEM", stage_ins[3].c_str());
-    fprintf(outputFilePtr, " \n");
+    if(stage_ins[3] == SW || stage_ins[3] == BEQ){
+        fprintf(outputFilePtr, " %d%d%d %dX\n", EX_MEM_Reg.Ctl_M.Branch, EX_MEM_Reg.Ctl_M.Mem_Read,
+                EX_MEM_Reg.Ctl_M.Mem_Write,EX_MEM_Reg.Ctl_WB.Reg_Write);
+    }
+    else{
+        fprintf(outputFilePtr, " %d%d%d %d%d\n", EX_MEM_Reg.Ctl_M.Branch, EX_MEM_Reg.Ctl_M.Mem_Read,
+            EX_MEM_Reg.Ctl_M.Mem_Write,EX_MEM_Reg.Ctl_WB.Reg_Write,EX_MEM_Reg.Ctl_WB.MemToReg);    
+    }
 
     MEM_WB_Reg.Ctl_WB = EX_MEM_Reg.Ctl_WB;
     Mem_Stage.Address = EX_MEM_Reg.ALU_Result;
@@ -93,7 +103,16 @@ void Execute(void) {
     if (stage_ins[2] == "") return;
 
     fprintf(outputFilePtr, "\t%s : EX", stage_ins[2].c_str());
-    fprintf(outputFilePtr, " \n");
+    if (stage_ins[2] == SW || stage_ins[2] == BEQ){
+        fprintf(outputFilePtr, " X%d %d%d%d %dX\n",ID_EX_Reg.Ctl_Ex.ALUSrc,
+                ID_EX_Reg.Ctl_M.Branch,ID_EX_Reg.Ctl_M.Mem_Read,ID_EX_Reg.Ctl_M.Mem_Write,
+                ID_EX_Reg.Ctl_WB.Reg_Write);
+    }
+    else{
+        fprintf(outputFilePtr, " %d%d %d%d%d %d%d\n", ID_EX_Reg.Ctl_Ex.RegDst,ID_EX_Reg.Ctl_Ex.ALUSrc,
+                ID_EX_Reg.Ctl_M.Branch,ID_EX_Reg.Ctl_M.Mem_Read,ID_EX_Reg.Ctl_M.Mem_Write,
+                ID_EX_Reg.Ctl_WB.Reg_Write, ID_EX_Reg.Ctl_WB.MemToReg);
+    }
 
     EX_Stage.Operand_1 = ID_EX_Reg.ReadData1;
     if (ID_EX_Reg.Ctl_Ex.ALUSrc) { EX_Stage.Operand_2 = ID_EX_Reg.Immediate; }
