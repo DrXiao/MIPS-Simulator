@@ -30,9 +30,9 @@ int main(void) {
 
     cycle = 0;
     int EOF_count = 0;
-    while (!(mipsIns.eof() && CheckEnding()))  {
+    while (!(mipsIns.tellg()==-1 && CheckEnding()))  {
         cycle += 1;
-        cout << prevIns.tellg() << " " <<  mipsIns.tellg() << endl;
+        // cout << prevIns.tellg() << " " <<  mipsIns.tellg() << endl;
         if (!mipsIns.eof()) {
             prevIns.seekg(mipsIns.tellg());
             getline(mipsIns, instruction);
@@ -50,42 +50,52 @@ int main(void) {
 
         Write_Back();
 
-        Bubble_MEM();
+        Bubble();
         
         Memory_Read_Write();
 
-        Bubble_EXE();
+        Bubble();
 
-        Execute();
+        Execute(); 
         Instruction_Decode();
         Instruction_Fetch(insToken);
 
 
         /* 檢查hazard */
-        hazard_EX_MEM = 0,hazard_MEM_WB = 0;
+        hazard = 0;
         /* EX data hazard */
         
        if(((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
             && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRs))
             || ((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
             && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRt)))    
-        {    
-            hazard_EX_MEM = 1;
+        {   
+            hazard = 1;
             if(EOF_count < 2)
                 Instruction_Backtrack(-1);
             printf("EXE hazard\n");       
         }
+        // cout<< "MEM_WB_Reg.RegRd: "<<MEM_WB_Reg.RegRd<<endl
+        //         << "EX_MEM_Reg.RegRd: "<<EX_MEM_Reg.RegRd<<endl
+        //         << "ID_EX_Reg.RegRs: "<<ID_EX_Reg.RegRs<<endl
+        //         << "IF_ID_Reg.RegRs: "<<IF_ID_Reg.RegRs<<endl
+        //         << "IF_ID_Reg.RegRt: "<<IF_ID_Reg.RegRt<<endl
+        //         << "ID_EX_Reg.RegRt: "<<ID_EX_Reg.RegRt<<endl
+        //         << "EX_Hazard: "<<hazard_EX_MEM<<endl;
+                
         /* MEM data hazard */
-        if((((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRs))
-            || ((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRt)))
-            && !hazard_EX_MEM)
+        else if((((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
+                && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRs))
+            || ((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
+            && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRt))))
         {
-            hazard_MEM_WB = 1;
-            Instruction_Backtrack(-1);
+            hazard = 1;
+            if(EOF_count < 2)
+                Instruction_Backtrack(-1);
             printf("MEM hazard\n");  
         }
-        for(int i = 0;i<5;i++)
-            cout<<"stage "<< i << " " <<stage_ins[i] << endl;
+        // for(int i = 0;i<5;i++)
+        //     cout<<"stage "<< i << " " <<stage_ins[i] << endl;
         
     }
     mipsIns.close();
@@ -100,3 +110,9 @@ int main(void) {
     // PAUSE;
     return 0;
 }
+
+/*
+* beq 只寫ㄌstall
+* 還沒判斷跳躍
+* 給值還沒寫
+*/

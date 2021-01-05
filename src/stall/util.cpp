@@ -1,16 +1,16 @@
-#include "util.h"
 #include <cstdio>
 #include <iomanip>
 #include <string>
 #include <iostream>
+#include "util.h"
+#include "stall.h"
 using namespace std;
 #define OUTPUT_FIELD 3
 
 
 int mipsRegisters[32] = {0};
 int memory[32] = {0};
-bool hazard_EX_MEM = 0;
-bool hazard_MEM_WB = 0;
+
 fstream mipsIns;
 fstream prevIns;
 
@@ -73,12 +73,12 @@ void Parse_Instruction(string &instruction, string insToken[4]) {
 
 void Move_Stages_Instruction(string &Next_New_Instruction) {
     int move_lb = 0;
-    if(hazard_EX_MEM) move_lb = 2;
+    if(hazard) move_lb = 2;
     for (int stages_ins_idx = 4; stages_ins_idx > move_lb; stages_ins_idx--) {
         stage_ins[stages_ins_idx] = stage_ins[stages_ins_idx - 1];
     }
     cout << "New instruction " << Next_New_Instruction << endl;
-    if(!hazard_EX_MEM)
+    if(!hazard)
         stage_ins[0] = Next_New_Instruction;
 }
 
