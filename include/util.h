@@ -16,6 +16,8 @@ extern string insToken[4];
 
 extern FILE *outputFilePtr;
 extern int cycle;
+extern bool hazard_EX_MEM;
+extern bool hazard_MEM_WB;
 
 extern int mipsRegisters[32];
 extern int memory[32];
