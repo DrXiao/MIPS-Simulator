@@ -202,7 +202,10 @@ void Instruction_Decode(void) {
 }
 
 void Instruction_Fetch(string insToken[4]) {
-    if (stage_ins[0] == "") return;
+    if (stage_ins[0] == "") {
+        memset(&IF_ID_Reg, 0, sizeof(IF_ID_Reg));
+        return;
+    }
     fprintf(outputFilePtr, "\t%s : IF\n", stage_ins[0].c_str());
 
     if (Load_Use_Hazard) {

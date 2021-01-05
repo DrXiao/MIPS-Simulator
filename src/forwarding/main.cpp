@@ -33,8 +33,8 @@ int main(void) {
     while (mipsIns.eof() == false || CheckEnding() == false) {
         cycle += 1;
         
-        if (mipsIns.eof() == false) {
-            //cout << prevIns.tellg() << " " <<  mipsIns.tellg() << endl;
+        if (mipsIns.eof() == false ) {
+            cout << prevIns.tellg() << " " <<  mipsIns.tellg() << endl;
             prevIns.seekg(mipsIns.tellg());
             getline(mipsIns, instruction);
             Parse_Instruction(instruction, insToken);
