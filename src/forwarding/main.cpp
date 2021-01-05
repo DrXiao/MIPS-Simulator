@@ -49,6 +49,7 @@ int main(void) {
         Write_Back();
         Memory_Read_Write();
         Execute();
+        BEQ_Flush();
         Load_Use_Hazard_Flush();
         Instruction_Decode();
         Instruction_Fetch(insToken);
