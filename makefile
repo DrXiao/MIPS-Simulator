@@ -15,6 +15,7 @@ stall:
 
 clean:
 	rm $(TARGET)
+	rm result.txt
 
 win_forwarding:
 	$(CC) $(CFLAGS) $(TARGET).exe $(SRC_DIR)/$(FORWARDING)/*.cpp -I$(INCLUDE_DIR)
@@ -24,3 +25,4 @@ win_stall:
 
 win_clean:
 	del $(TARGET).exe
+	del result.txt

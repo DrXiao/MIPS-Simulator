@@ -1,13 +1,19 @@
 #include "util.h"
+#include "forwarding.h"
+#include "pipelineReg.h"
 #include <cstdio>
+#include <iostream>
 #include <iomanip>
 #include <string>
+#include <cstring>
 using namespace std;
-#define OUTPUT_FIELD 3
+#define OUTPUT_FIELD 7
 
 int mipsRegisters[32] = {0};
 int memory[32] = {0};
 
+fstream mipsIns;
+fstream prevIns;
 FILE *outputFilePtr = stdout;
 int cycle = 0;
 
@@ -58,4 +64,23 @@ bool CheckEnding(void) {
         if (stage_ins[stages_ins_idx] != "") return false;
     }
     return true;
+}
+
+void Instruction_Backtrack(int lines) {
+    if (lines == 0)
+        return;
+    else if (lines == -1) {
+        mipsIns.setstate(prevIns.rdstate());
+        mipsIns.seekg(prevIns.tellg());
+        cout << mipsIns.tellg() << endl;
+        return;
+    }
+    int offset = lines > 0 ? 1 : -1;
+    lines = lines < 0 ? -lines + 1 : lines;
+    while (lines) {
+        mipsIns.seekg(offset, mipsIns.cur);
+        if (mipsIns.peek() == '\n');
+            lines--;
+    }
+    mipsIns.seekg(1, mipsIns.cur);
 }

@@ -8,10 +8,10 @@
             "name": "g++.exe - 建置及偵錯使用中的檔案",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "program": "C:\\Users\\jasmi\\Desktop\\vscode_program\\C\\MIPS-Simulator\\main.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "C:\\MinGW\\bin",
+            "cwd": "C:\\Users\\jasmi\\Desktop\\vscode_program\\C\\MIPS-Simulator\\",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -23,7 +23,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "C/C++: g++.exe build active file"
+            "preLaunchTask": "C/C++: Make"
         }
     ]
 }

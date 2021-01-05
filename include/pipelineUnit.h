@@ -1,6 +1,15 @@
 #ifndef __PIPELINE_UNIT_H__
 #define __PIPELINE_UNIT_H__
 #include <cstdint>
+#include <string>
+using namespace std;
+
+
+typedef struct PipeLine_IF_Stage {
+
+    string tokens[4];    
+
+} PipeLine_IF_Stage;
 
 typedef struct Pipeline_ID_Stage {
     // ID inputs
@@ -31,8 +40,19 @@ typedef struct Pipeline_MEM_Stage {
     int32_t ReadData;
 } Pipeline_MEM_Stage;
 
+typedef struct Pipeline_WB_Stage {
+    // WB inputs
+    int32_t DataOfMem;
+    int32_t ALU_Result;
+
+    // WB outputs
+    int32_t WriteBackData;
+} Pipeline_WB_Stage;
+
+extern PipeLine_IF_Stage IF_Stage;
 extern Pipeline_ID_Stage ID_Stage;
 extern Pipeline_EX_Stage EX_Stage;
 extern Pipeline_MEM_Stage Mem_Stage;
+extern Pipeline_WB_Stage WB_Stage;
 
 #endif

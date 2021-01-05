@@ -3,6 +3,7 @@
 #include <cstdio>
 #include "pipelineReg.h"
 #include "pipelineUnit.h"
+#include <cstring>
 #include "util.h"
 using namespace std;
 
@@ -63,11 +64,7 @@ void Write_Back(void) {
 
 void Memory_Read_Write(void) {
 
-    if(hazard_MEM_WB)
-    {
-        //fprintf(outputFilePtr, "\t%s : MEM", stage_ins[3].c_str());
-        return;
-    }
+
     if (stage_ins[3] == "") return;
     fprintf(outputFilePtr, "\t%s : MEM", stage_ins[3].c_str());
     if(stage_ins[3] == SW || stage_ins[3] == BEQ){
@@ -95,17 +92,7 @@ void Memory_Read_Write(void) {
 
 void Execute(void) {
     
-    if(hazard_EX_MEM || hazard_MEM_WB){
-        EX_MEM_Reg = {
-            .Ctl_WB = {.Reg_Write = 0, .MemToReg = 0},
-            .Ctl_M = {.Branch = 0, .Mem_Read = 0, .Mem_Write = 0},
-            .Zero = 0,
-            .ALU_Result = 0,
-            .ReadData = 0,
-            .RegRd = 0
-        };
-        return;
-    }
+    
     if (stage_ins[2] == "") return;
     fprintf(outputFilePtr, "\t%s : EX", stage_ins[2].c_str());
     
@@ -119,7 +106,8 @@ void Execute(void) {
                 ID_EX_Reg.Ctl_M.Branch,ID_EX_Reg.Ctl_M.Mem_Read,ID_EX_Reg.Ctl_M.Mem_Write,
                 ID_EX_Reg.Ctl_WB.Reg_Write, ID_EX_Reg.Ctl_WB.MemToReg);
     }
-
+    /* data hazard */
+    if(hazard_EX_MEM|| hazard_MEM_WB) return;
     EX_Stage.Operand_1 = ID_EX_Reg.ReadData1;
     if (ID_EX_Reg.Ctl_Ex.ALUSrc) { EX_Stage.Operand_2 = ID_EX_Reg.Immediate; }
     else {
@@ -133,6 +121,7 @@ void Execute(void) {
         EX_Stage.ALU_Result = EX_Stage.Operand_1 + EX_Stage.Operand_2;
     }
     if (EX_Stage.ALU_Result == 0) EX_Stage.Zero = 1;
+
 
     EX_MEM_Reg.Ctl_WB = ID_EX_Reg.Ctl_WB;
     EX_MEM_Reg.Ctl_M = ID_EX_Reg.Ctl_M;
@@ -150,11 +139,7 @@ void Instruction_Decode(void) {
    
     if (stage_ins[1] == "") return;
     fprintf(outputFilePtr, "\t%s : ID\n", stage_ins[1].c_str());
-    for(int i = 0;i < 4;i++)
-    {
-        printf("%d %s\n",i,stage_ins[i].c_str());
-    }
-    if (hazard_EX_MEM || hazard_MEM_WB) return;
+
     ID_Stage.ReadReg1 = IF_ID_Reg.RegRs;
     ID_Stage.ReadReg2 = IF_ID_Reg.RegRt;
 
@@ -206,15 +191,12 @@ void Instruction_Decode(void) {
 
 void Instruction_Fetch(string insToken[4]) {
 
-    if (insToken[0] == ""){
-        IF_ID_Reg = {.OpCode = "", .RegRs = 0, .RegRt = 0, .RegRd = 0, .Immediate = 0};
+    if (stage_ins[0] == ""){
+        // IF_ID_Reg = {.OpCode = "", .RegRs = 0, .RegRt = 0, .RegRd = 0, .Immediate = 0};
+        memset(&IF_ID_Reg,0, sizeof(IF_ID_Reg));
         return;
     }
-    if (hazard_EX_MEM || hazard_MEM_WB){ 
-        fprintf(outputFilePtr, "\t%s : IF\n", stage_ins[0].c_str());
-        return;
-    }
-    
+
     fprintf(outputFilePtr, "\t%s : IF\n", stage_ins[0].c_str());
     
     IF_ID_Reg = {.OpCode = "", .RegRs = 0, .RegRt = 0, .RegRd = 0, .Immediate = 0};
