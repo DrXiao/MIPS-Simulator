@@ -66,13 +66,14 @@ bool CheckEnding(void) {
     return true;
 }
 
+
+
 void Instruction_Backtrack(int lines) {
     if (lines == 0)
         return;
     else if (lines == -1) {
         mipsIns.setstate(prevIns.rdstate());
         mipsIns.seekg(prevIns.tellg());
-        cout << mipsIns.tellg() << endl;
         return;
     }
     int offset = lines > 0 ? 1 : -1;
