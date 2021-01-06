@@ -36,8 +36,6 @@ MEM_WB_Pipeline_Reg MEM_WB_Reg = {.Ctl_WB = {.Reg_Write = 0, .MemToReg = 0},
                                   .ALU_Result = 0,
                                   .RegRd = 0};
 
-PipeLine_IF_Stage IF_Stage = {.tokens = {"", "", "", ""}};
-
 Pipeline_ID_Stage ID_Stage = {
     .ReadReg1 = 0, .ReadReg2 = 0, .ReadData1 = 0, .ReadData2 = 0};
 
@@ -85,9 +83,9 @@ void Memory_Read_Write(void) {
                 EX_MEM_Reg.Ctl_WB.Reg_Write);
     }
     else{
-        fprintf(outputFilePtr, " %d%d%d %d%d\n", EX_MEM_Reg.Ctl_M.Branch, EX_MEM_Reg.Ctl_M.Mem_Read,
+        fprintf(outputFilePtr, " %d%d%d %d%d\n", EX_MEM_Reg.Ctl_M.Branch,
                 EX_MEM_Reg.Ctl_M.Mem_Read, EX_MEM_Reg.Ctl_M.Mem_Write,
-                EX_MEM_Reg.Ctl_WB.Reg_Write, EX_MEM_Reg.Ctl_WB.MemToReg);   
+                EX_MEM_Reg.Ctl_WB.Reg_Write, EX_MEM_Reg.Ctl_WB.MemToReg);
     }
 
     MEM_WB_Reg.Ctl_WB = EX_MEM_Reg.Ctl_WB;
