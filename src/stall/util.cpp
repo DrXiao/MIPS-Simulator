@@ -1,11 +1,12 @@
+#include "util.h"
+#include "stall.h"
+#include "pipelineReg.h"
 #include <cstdio>
 #include <iomanip>
 #include <string>
 #include <iostream>
-#include "util.h"
-#include "stall.h"
 using namespace std;
-#define OUTPUT_FIELD 3
+#define OUTPUT_FIELD 5
 
 
 int mipsRegisters[32] = {0};
@@ -17,7 +18,7 @@ uint32_t insLine = 0;
 FILE *outputFilePtr = stdout;
 int cycle = 0;
 void Instruction_Backtrack(int lines) {
-    cout << "Back track called: " << lines << endl;
+    // cout << "Back track called: " << lines << endl;
    if (lines == 0)
         return;
     else if (lines < 0) {
@@ -82,7 +83,7 @@ void Move_Stages_Instruction(string &Next_New_Instruction) {
     for (int stages_ins_idx = 4; stages_ins_idx > move_lb; stages_ins_idx--) {
         stage_ins[stages_ins_idx] = stage_ins[stages_ins_idx - 1];
     }
-    cout << "New instruction " << Next_New_Instruction << endl;
+    // cout << "New instruction " << Next_New_Instruction << endl;
     if(!hazard)
         stage_ins[0] = Next_New_Instruction;
 }

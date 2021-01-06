@@ -39,23 +39,20 @@ int main(void) {
             Parse_Instruction(instruction, insToken);
         }
         else{
-            cout << "EOF!!!" << endl;
+            // cout << "EOF!!!" << endl;
             instruction = insToken[0] = "";
             EOF_count++;
         }
         if(cycle>15) break;
         fprintf(outputFilePtr, "Cycle %d : \n", cycle);
-
         Move_Stages_Instruction(insToken[0]);
 
-        Write_Back();
 
-        Bubble();
-        
+        Write_Back();
+        Bubble();           //
         Memory_Read_Write();
-        Bubble();
+        Bubble();           //
         Execute();
-        // Branch_bubble(); 
         Instruction_Decode();
         Instruction_Fetch(insToken);
         
