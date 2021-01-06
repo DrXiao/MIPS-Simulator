@@ -131,7 +131,8 @@ void Execute(void) {
         EX_Stage.ALU_Result = EX_Stage.Operand_1 + EX_Stage.Operand_2;
     }
     if (EX_Stage.ALU_Result == 0) EX_Stage.Zero = 1;
-    if (EX_Stage.Zero==1 && stage_ins[2]==BEQ) Check_BEQ_TAKEN();
+    
+
 
     EX_MEM_Reg.Ctl_WB = ID_EX_Reg.Ctl_WB;
     EX_MEM_Reg.Ctl_M = ID_EX_Reg.Ctl_M;
@@ -149,6 +150,10 @@ void Instruction_Decode(void) {
     memset(&ID_EX_Reg, 0, sizeof(ID_EX_Reg));
     if (stage_ins[1] == "") return;
     fprintf(outputFilePtr, "\t%s : ID\n", stage_ins[1].c_str());
+
+    if (Branch_Stall) {
+        return;
+    }
 
     if (Load_Use_Hazard && ID_Load_Use_Hazard_Happen == 0) {
         ID_Load_Use_Hazard_Happen = 1;
@@ -209,9 +214,16 @@ void Instruction_Decode(void) {
 }
 
 void Instruction_Fetch(string insToken[4]) {
-    memset(&IF_ID_Reg, 0, sizeof(IF_ID_Reg));
-    if (stage_ins[0] == "" || Branch_Stall) { return; }
+    if (Branch_Stall == 0)
+        memset(&IF_ID_Reg, 0, sizeof(IF_ID_Reg));
+    if (stage_ins[0] == "") { return; }
     fprintf(outputFilePtr, "\t%s : IF\n", stage_ins[0].c_str());
+
+    if (Branch_Stall) {
+        stage_ins[1] = "";
+        stage_ins[0] = BEQ;
+        return;
+    }
 
     if (Load_Use_Hazard) { return; }
 

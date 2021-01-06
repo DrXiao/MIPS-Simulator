@@ -32,6 +32,7 @@ int main(void) {
 
     while (mipsIns.eof() == false || CheckEnding() == false) {
         cycle += 1;
+        Stall_Flag_Re();
 
         if (mipsIns.eof() == false) {
             insLine++;
@@ -47,7 +48,8 @@ int main(void) {
         Write_Back();
         Memory_Read_Write();
         Execute();
-        BEQ_Flush();
+        Check_Branch_Stall();
+        // BEQ_Flush();
         Load_Use_Hazard_Flush();
         Instruction_Decode();
         Instruction_Fetch(insToken);
