@@ -78,7 +78,7 @@ void Memory_Read_Write(void) {
     }
     fprintf(outputFilePtr, "\t%s : MEM", stage_ins[3].c_str());
     if(stage_ins[3] == SW || stage_ins[3] == BEQ){
-        fprintf(outputFilePtr, " %d%d%d %dX\n", EX_MEM_Reg.Ctl_M.Branch, EX_MEM_Reg.Ctl_M.Mem_Read,
+        fprintf(outputFilePtr, " %d%d%d %dX\n", EX_MEM_Reg.Ctl_M.Branch,
                 EX_MEM_Reg.Ctl_M.Mem_Read, EX_MEM_Reg.Ctl_M.Mem_Write,
                 EX_MEM_Reg.Ctl_WB.Reg_Write);
     }
@@ -96,7 +96,7 @@ void Memory_Read_Write(void) {
     }
     else if (EX_MEM_Reg.Ctl_M.Mem_Write) {
         // 檢查一下
-                *(int32_t *)(memoryPtr + Mem_Stage.Address) = Mem_Stage.WriteData;
+        *(int32_t *)(memoryPtr + Mem_Stage.Address) = Mem_Stage.WriteData;
     }
     MEM_WB_Reg.ALU_Result = EX_MEM_Reg.ALU_Result;
     MEM_WB_Reg.RegRd = EX_MEM_Reg.RegRd;
@@ -138,6 +138,7 @@ void Execute(void) {
         EX_Stage.ALU_Result = EX_Stage.Operand_1 + EX_Stage.Operand_2;
     }
     if (EX_Stage.ALU_Result == 0) EX_Stage.Zero = 1;
+    // if(EX_Stage.Zero && stage_ins[2] == BEQ) Check_BEQ_Taken();
 
 
     EX_MEM_Reg.Ctl_WB = ID_EX_Reg.Ctl_WB;
@@ -159,8 +160,7 @@ void Instruction_Decode(void) {
         return;
     }
     fprintf(outputFilePtr, "\t%s : ID\n", stage_ins[1].c_str());
-    if(hazard){printf("hazard in Instruct_Decode!!!!!!!\n");  return;}
-    if(branch){printf("stall in branch\n"); return;}
+    if(hazard) return;
     ID_Stage.ReadReg1 = IF_ID_Reg.RegRs;
     ID_Stage.ReadReg2 = IF_ID_Reg.RegRt;
 
@@ -210,6 +210,7 @@ void Instruction_Decode(void) {
         ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
         ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
         ID_EX_Reg.RegRd = IF_ID_Reg.RegRd; // Needs to check
+        
     }
 }
 

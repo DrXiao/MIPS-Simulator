@@ -11,47 +11,63 @@ int branch = 0;
 //1 還有發生一次
 //2 還要發生兩次
 int EOF_count = 0;
+bool branch_taken = false;
 void Bubble()
 {    
     if(hazard)
     {
         //EXE被沖刷
-        // memset(&ID_EX_Reg,0,sizeof(ID_EX_Reg));    
         stage_ins[2] = "";
     }
 
 }
 
-void Check_Branch()
+void Check_hazard()
 {
+    hazard = 0;
+        /* EX data hazard */
     
-    if(stage_ins[1] == BEQ && branch == 0)
-    {
-        // printf("!!!!!!Branch now!!!!!!Branch = %d\n", branch);
-        branch = 2;
+    if(((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
+            && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRs))
+        || ((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
+            && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRt))
+        && !branch)    
+    {   
+        hazard = 1;
+        if(EOF_count < 2)
+            Instruction_Backtrack(-1);
+        printf("EXE hazard\n");       
     }
-
-    cout<< "branch " << branch <<endl;
-    // if(branch != 0)
-    // {
-    //     branch = branch - 1;
-    //     if(EOF_count < 2 && branch != 1)
-    //         Instruction_Backtrack(-1);
-    // }
+                
+        /* MEM data hazard */
+    else if((((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
+                && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRs))
+        || ((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
+            && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRt)))
+        && !branch)
+    {
+        hazard = 1;
+        if(EOF_count < 2)
+            Instruction_Backtrack(-1);
+        printf("MEM hazard\n");  
+    }
 
 }
 
-void Branch_bubble()
+
+void Check_BEQ_Taken()
 {
-    if(branch == 0) return;
-    stage_ins[2] = "";
-    memset(&IF_ID_Reg,0,sizeof(IF_ID_Reg));
-    if(branch != 0)
+    branch_taken = true;
+}
+
+void Branch_Flush()
+{
+    
+    if(branch_taken)
     {
-        branch = branch - 1;
-        // cout<<"branch = "<<branch<<"???????"<<endl;
-        if(EOF_count < 2 && branch != 0)
-            Instruction_Backtrack(-1);
+        cout<<"flush!!!"<<endl;
     }
 
 } 
+
+

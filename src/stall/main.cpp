@@ -56,47 +56,7 @@ int main(void) {
         Instruction_Decode();
         Instruction_Fetch(insToken);
         
-        
-        // Check_Branch();
-
-        /* 檢查hazard */
-        hazard = 0;
-        /* EX data hazard */
-        
-       if(((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
-            && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRs))
-            || ((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
-            && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRt))
-            && !branch)    
-        {   
-            hazard = 1;
-            if(EOF_count < 2)
-                Instruction_Backtrack(-1);
-            printf("EXE hazard\n");       
-        }
-        // cout<< "MEM_WB_Reg.RegRd: "<<MEM_WB_Reg.RegRd<<endl
-        //         << "EX_MEM_Reg.RegRd: "<<EX_MEM_Reg.RegRd<<endl
-        //         << "ID_EX_Reg.RegRs: "<<ID_EX_Reg.RegRs<<endl
-        //         << "IF_ID_Reg.RegRs: "<<IF_ID_Reg.RegRs<<endl
-        //         << "IF_ID_Reg.RegRt: "<<IF_ID_Reg.RegRt<<endl
-        //         << "ID_EX_Reg.RegRt: "<<ID_EX_Reg.RegRt<<endl
-        //         << "EX_Hazard: "<<hazard_EX_MEM<<endl;
-                
-        /* MEM data hazard */
-        else if((((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
-                && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRs))
-            || ((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
-            && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRt)))
-            && !branch)
-        {
-            hazard = 1;
-            if(EOF_count < 2)
-                Instruction_Backtrack(-1);
-            printf("MEM hazard\n");  
-        }
-        // for(int i = 0;i<5;i++)
-        //     cout<<"stage "<< i << " " <<stage_ins[i] << endl;
-        
+        Check_hazard();
     }
     mipsIns.close();
     headIns.close();

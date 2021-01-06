@@ -80,7 +80,7 @@ void Instruction_Backtrack(int lines) {
             string prevIns;
             getline(mipsIns, prevIns);
         }
-        cout << mipsIns.tellg() << endl;
+        // cout << mipsIns.tellg() << endl;
         insLine += lines;
     }
     else {
