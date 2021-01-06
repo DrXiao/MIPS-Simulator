@@ -16,7 +16,6 @@ void Check_Branch_Hazard(void);
 void EX_MEM_Forwarding(void);
 void Load_Use_Forwarding(void);
 void Load_Use_Hazard_Flush(void);
-void Check_BEQ_TAKEN(void);
-void BEQ_Flush(void);
+void Stall_Flag_Re(void);
 
 #endif
