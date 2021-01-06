@@ -131,6 +131,7 @@ void Execute(void) {
         EX_Stage.ALU_Result = EX_Stage.Operand_1 + EX_Stage.Operand_2;
     }
     if (EX_Stage.ALU_Result == 0) EX_Stage.Zero = 1;
+    if (EX_Stage.Zero==1 && stage_ins[2]==BEQ) Check_BEQ_TAKEN();
 
     EX_MEM_Reg.Ctl_WB = ID_EX_Reg.Ctl_WB;
     EX_MEM_Reg.Ctl_M = ID_EX_Reg.Ctl_M;

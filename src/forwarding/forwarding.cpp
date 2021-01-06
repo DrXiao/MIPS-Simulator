@@ -16,6 +16,7 @@ bool Load_Use_Hazard_Forwarding_Rs = 0;
 bool Load_Use_Hazard_Forwarding_Rt = 0;
 int Branch_Stall = 0;
 bool Branch_Hazard = 0;
+bool BEQ_Taken=0;
 
 #define EX_HAZARD(reg)                                                         \
     EX_MEM_Reg.Ctl_WB.Reg_Write == 1 && EX_MEM_Reg.RegRd != 0 &&               \
@@ -180,4 +181,28 @@ void Load_Use_Forwarding(void) {
         ID_EX_Reg.ReadData1 = MEM_WB_Reg.DataOfMem;
     if (Load_Use_Hazard_Forwarding_Rt)
         ID_EX_Reg.ReadData2 = MEM_WB_Reg.DataOfMem;
+}
+
+void Check_BEQ_TAKEN(void){
+    BEQ_Taken=true;
+}
+
+void BEQ_Flush(void){
+    if(BEQ_Taken){
+        stage_ins[0] = "";
+        stage_ins[1] = "";
+        IF_ID_Reg.OpCode = "";
+        
+        sscanf(insToken[1].c_str(), "$%hu", &IF_ID_Reg.RegRs);
+        sscanf(insToken[2].c_str(), "$%hu", &IF_ID_Reg.RegRt);
+        IF_ID_Reg.Immediate = stol(insToken[3]);
+        
+        memset(&ID_EX_Reg.Ctl_WB, 0, sizeof(ID_EX_Reg.Ctl_WB));
+        memset(&ID_EX_Reg.Ctl_M, 0, sizeof(ID_EX_Reg.Ctl_M));
+        memset(&ID_EX_Reg.Ctl_Ex, 0, sizeof(ID_EX_Reg.Ctl_Ex));
+
+        int pc_register = atoi(insToken[3].c_str());
+        Instruction_Backtrack(pc_register);
+        BEQ_Taken=false;
+    }
 }

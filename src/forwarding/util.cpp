@@ -67,6 +67,8 @@ bool CheckEnding(void) {
     return true;
 }
 
+
+
 void Instruction_Backtrack(int lines) {
     if (lines == 0)
         return;
