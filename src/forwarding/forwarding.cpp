@@ -15,7 +15,7 @@ bool Load_Use_Hazard = 0;
 bool Load_Use_Hazard_Forwarding_Rs = 0;
 bool Load_Use_Hazard_Forwarding_Rt = 0;
 int Branch_Stall = 0;
- bool stall_flag=0;
+bool stall_flag = 0;
 
 #define EX_HAZARD(reg)                                                         \
     EX_MEM_Reg.Ctl_WB.Reg_Write == 1 && EX_MEM_Reg.RegRd != 0 &&               \
@@ -32,36 +32,34 @@ using namespace std;
 
 int Load_Use_count = 0;
 
-void Stall_Flag_Re(void){
-    stall_flag=0;
+void Stall_Flag_Re(void) {
+    stall_flag = 0;
 }
 
 void Check_EX_And_MEM_Hazard(void) {
-    if(stall_flag==true || Load_Use_Hazard || Load_Use_count){
-        return;
-    }
+    if (stall_flag == true || Load_Use_Hazard || Load_Use_count) { return; }
     // EX hazard
     if (EX_HAZARD(Rs)) {
-        stall_flag=true;
+
         EX_Hazard_Rs = 1;
         // ID_EX_Reg.ReadData1 = EX_MEM_Reg.ALU_Result;
     }
     // Mem hazard
     else if (MEM_HAZARD(Rs)) {
-        stall_flag=true;
+
         MEM_Hazard_Rs = 1;
         // ID_EX_Reg.ReadData1 = WB_Stage.WriteBackData;
     }
 
     // EX hazard
     if (EX_HAZARD(Rt)) {
-        stall_flag=true;
+
         EX_Hazard_Rt = 1;
         // ID_EX_Reg.ReadData2 = EX_MEM_Reg.ALU_Result;
     }
     // Mem hazard
     else if (MEM_HAZARD(Rt)) {
-        stall_flag=true;
+
         MEM_Hazard_Rt = 1;
         // ID_EX_Reg.ReadData2 = WB_Stage.WriteBackData;
     }
@@ -69,23 +67,19 @@ void Check_EX_And_MEM_Hazard(void) {
 }
 
 void Check_Load_Use_Hazard(void) {
-    if(stall_flag==true){
-        return;
-    }
-    if(stage_ins[0]==BEQ){
-        return;
-    }
+    if (stall_flag == true) { return; }
+    if (stage_ins[0] == BEQ) { return; }
     // Load-Use hazard
     bool Hazard = false;
     if (LOAD_USE_HAZARD(Rs)) {
-        stall_flag=true;
+        stall_flag = true;
         Load_Use_Hazard = 1;
         Load_Use_Hazard_Forwarding_Rs = 1;
         Load_Use_count = 3;
         Hazard = true;
     }
     if (LOAD_USE_HAZARD(Rt)) {
-        stall_flag=true;
+        stall_flag = true;
         Load_Use_Hazard = 1;
         Load_Use_Hazard_Forwarding_Rt = 1;
         Load_Use_count = 3;
@@ -101,40 +95,36 @@ void Check_Load_Use_Hazard(void) {
 void Check_Branch_Stall(void) {
     // 前一個是 lw
     Branch_Stall = 0;
-    if( stage_ins[1]!="beq" || stall_flag==true){
-        return;
-    }
+    if (stage_ins[1] != "beq" || stall_flag == true) { return; }
     if (stage_ins[2] == "lw" && ID_Stage.ReadReg1 == EX_MEM_Reg.RegRd) {
-        stall_flag=true;
+        stall_flag = true;
         Branch_Stall = 1;
     }
     else if (stage_ins[2] == "lw" && ID_Stage.ReadReg2 == EX_MEM_Reg.RegRd) {
-        stall_flag=true;
+        stall_flag = true;
         Branch_Stall = 1;
     }
     else if (stage_ins[2] == "add" && ID_Stage.ReadReg1 == EX_MEM_Reg.RegRd) {
-        stall_flag=true;
+        stall_flag = true;
         Branch_Stall = 1;
     }
     else if (stage_ins[2] == "add" && ID_Stage.ReadReg2 == EX_MEM_Reg.RegRd) {
-        stall_flag=true;
+        stall_flag = true;
         Branch_Stall = 1;
     }
     else if (stage_ins[3] == "lw" && ID_Stage.ReadReg1 == MEM_WB_Reg.RegRd) {
-        stall_flag=true;
+        stall_flag = true;
         Branch_Stall = 1;
     }
     else if (stage_ins[3] == "lw" && ID_Stage.ReadReg2 == MEM_WB_Reg.RegRd) {
-        stall_flag=true;
+        stall_flag = true;
         Branch_Stall = 1;
     }
-    
 }
 
 void Branch_Data_Hazard_2nd_3nd(void) {
 
-    if (stage_ins[1] != BEQ)
-        return;
+    if (stage_ins[1] != BEQ) return;
     if (ID_Stage.ReadReg1 == EX_MEM_Reg.RegRd) {
         ID_EX_Reg.ReadData1 = EX_MEM_Reg.ALU_Result;
     }
@@ -150,11 +140,9 @@ void Branch_Data_Hazard_2nd_3nd(void) {
 }
 
 void Check_Branch_Hazard(void) {
-    if(stall_flag==true){
-        return;
-    }
+    if (stall_flag == true) { return; }
     if (stage_ins[1] == BEQ && ID_EX_Reg.ReadData1 == ID_EX_Reg.ReadData2) {
-        stall_flag=true;
+        stall_flag = true;
         stage_ins[0] = "";
         memset(&IF_ID_Reg, 0, sizeof(IF_ID_Reg));
         Instruction_Backtrack(ID_EX_Reg.Immediate - 1);
