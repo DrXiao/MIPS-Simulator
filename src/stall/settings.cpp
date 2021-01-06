@@ -10,7 +10,7 @@
 using namespace std;
 
 IF_ID_Pipeline_Reg IF_ID_Reg = {
-    .OpCode = "", .RegRs = 0, .RegRt = 0, .RegRd = 0, .Immediate = 0};
+    .RegRs = 0, .RegRt = 0, .RegRd = 0, .Immediate = 0};
 
 ID_EX_Pipeline_Reg ID_EX_Reg = {
     .Ctl_WB = {.Reg_Write = 0, .MemToReg = 0},
@@ -51,6 +51,7 @@ string stage_ins[5];
 
 void Write_Back(void) {
     if (stage_ins[4] == "") return;
+    //MEM_WB_Reg.print();
     fprintf(outputFilePtr, "\t%s : WB", stage_ins[4].c_str());
     if (stage_ins[4] == SW || stage_ins[4] == BEQ) {
         fprintf(outputFilePtr, " %dX\n", MEM_WB_Reg.Ctl_WB.Reg_Write);
@@ -76,6 +77,7 @@ void Memory_Read_Write(void) {
         memset(&MEM_WB_Reg,0, sizeof(MEM_WB_Reg));
         return;
     }
+    //EX_MEM_Reg.print();
     fprintf(outputFilePtr, "\t%s : MEM", stage_ins[3].c_str());
     if(stage_ins[3] == SW || stage_ins[3] == BEQ){
         fprintf(outputFilePtr, " %d%d%d %dX\n", EX_MEM_Reg.Ctl_M.Branch,
@@ -107,9 +109,10 @@ void Execute(void) {
     
     if (stage_ins[2] == "")
     {
-        memset(&EX_MEM_Reg,0, sizeof(EX_MEM_Reg));
+        memset(&EX_MEM_Reg, 0, sizeof(EX_MEM_Reg));
         return;
     }
+    //ID_EX_Reg.print();
     fprintf(outputFilePtr, "\t%s : EX", stage_ins[2].c_str());
     
     if (stage_ins[2] == SW || stage_ins[2] == BEQ){
@@ -124,7 +127,7 @@ void Execute(void) {
                 ID_EX_Reg.Ctl_WB.Reg_Write, ID_EX_Reg.Ctl_WB.MemToReg);
     }
     /* data hazard */
-    if(hazard) {printf("hazard in EXE_MEM pipeline!!!!!\n");return;}
+    //if(hazard) {printf("hazard in EXE_MEM pipeline!!!!!\n");return;}
     EX_Stage.Operand_1 = ID_EX_Reg.ReadData1;
     if (ID_EX_Reg.Ctl_Ex.ALUSrc) { EX_Stage.Operand_2 = ID_EX_Reg.Immediate; }
     else {
@@ -159,15 +162,19 @@ void Instruction_Decode(void) {
         memset(&ID_EX_Reg,0, sizeof(ID_EX_Reg));
         return;
     }
+    //IF_ID_Reg.print();
     fprintf(outputFilePtr, "\t%s : ID\n", stage_ins[1].c_str());
-    if(hazard || branch_stall) return;
+    
+    // Skip if stalled
+    if(hazard) return;
+
     ID_Stage.ReadReg1 = IF_ID_Reg.RegRs;
     ID_Stage.ReadReg2 = IF_ID_Reg.RegRt;
 
     ID_Stage.ReadData1 = mipsRegisters[ID_Stage.ReadReg1];
     ID_Stage.ReadData2 = mipsRegisters[ID_Stage.ReadReg2];
-    cout<< ID_Stage.ReadReg1 << " " << ID_Stage.ReadData1 << endl
-        << ID_Stage.ReadReg2 << " " << ID_Stage.ReadData2 << endl;
+    //cout<< ID_Stage.ReadReg1 << " " << ID_Stage.ReadData1 << endl
+    //    << ID_Stage.ReadReg2 << " " << ID_Stage.ReadData2 << endl;
     if (stage_ins[1] == ADD || stage_ins[1] == SUB) {
         ID_EX_Reg.Ctl_WB = {.Reg_Write = 1, .MemToReg = 0};
         ID_EX_Reg.Ctl_M = {.Branch = 0, .Mem_Read = 0, .Mem_Write = 0};
@@ -214,14 +221,19 @@ void Instruction_Decode(void) {
     }
 }
 
-void Instruction_Fetch(string insToken[4]) {
+void Instruction_Fetch(string* insToken) {
 
-    memset(&IF_ID_Reg,0, sizeof(IF_ID_Reg));
     if (stage_ins[0] == "") return;
  
     fprintf(outputFilePtr, "\t%s : IF\n", stage_ins[0].c_str());
 
-    IF_ID_Reg.OpCode = insToken[0];
+    // If stalled, do not flush the pipeline register and not fetch new instruction
+    if(!hazard){
+        memset(&IF_ID_Reg,0, sizeof(IF_ID_Reg));
+    }else{
+        return;
+    }
+
     if (insToken[0] == LW || insToken[0] == SW) {
         sscanf(insToken[1].c_str(), "$%hu", &IF_ID_Reg.RegRt);
         sscanf(insToken[2].c_str(), "%hd($%hu)", &IF_ID_Reg.Immediate,

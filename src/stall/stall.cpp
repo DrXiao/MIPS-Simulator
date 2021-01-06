@@ -25,10 +25,15 @@ void Check_hazard()
     hazard = 0;
         /* EX data hazard */
     
-    if(((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
-            && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRs))
-        || ((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
-            && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRt)))    
+    // cout << "EX_MEM_Reg.RegRd " << EX_MEM_Reg.RegRd << endl
+    //      << "ID_EX_Reg.RegRd " << ID_EX_Reg.RegRd << endl
+    //      << "IF_ID_Reg.RegRs " << IF_ID_Reg.RegRs << endl
+    //      << "IF_ID_Reg.RegRt " << IF_ID_Reg.RegRt << endl;
+
+    if(((ID_EX_Reg.Ctl_WB.Reg_Write == 1) && (ID_EX_Reg.RegRd != 0) 
+            && (ID_EX_Reg.RegRd == IF_ID_Reg.RegRs))
+        || ((ID_EX_Reg.Ctl_WB.Reg_Write == 1) && (ID_EX_Reg.RegRd != 0) 
+            && (ID_EX_Reg.RegRd == IF_ID_Reg.RegRt)))    
     {   
         hazard = 1;
         if(EOF_count < 2)
@@ -37,11 +42,16 @@ void Check_hazard()
     }
                 
         /* MEM data hazard */
-    else if((((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
-                && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRs))
+    else if(((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
+            && (EX_MEM_Reg.RegRd == IF_ID_Reg.RegRs))
+        || ((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
+            && (EX_MEM_Reg.RegRd == IF_ID_Reg.RegRt)))    
+    { 
+    /*else if((((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
+                && (MEM_WB_Reg.RegRd == IF_ID_Reg.RegRs))
         || ((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
-            && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRt))))
-    {
+            && (MEM_WB_Reg.RegRd == IF_ID_Reg.RegRt))))
+    {*/
         hazard = 1;
         if(EOF_count < 2)
             Instruction_Backtrack(-1);

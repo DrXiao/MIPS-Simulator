@@ -1,0 +1,19 @@
+Cycle 1 : 
+	lw : IF
+Cycle 2 : 
+	lw : ID
+	lw : IF
+Cycle 3 : 
+	lw : EX 01 010 11
+	lw : ID
+	add : IF
+Cycle 4 : 
+	lw : MEM 010 11
+	lw : EX 01 010 11
+	add : ID
+	sw : IF
+Cycle 5 : 
+	lw : WB 11
+	lw : MEM 010 11
+	add : ID
+	sw : IF

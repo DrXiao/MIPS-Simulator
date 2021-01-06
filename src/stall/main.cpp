@@ -15,9 +15,6 @@ using namespace std;
 
 #define OUTPUT_FILE_OPEN 0
 
-string instruction = "";
-string insToken[4] = {"", "", "", ""};
-
 int main(void) {
 
     Init_Reg_Mem();
@@ -30,6 +27,8 @@ int main(void) {
     headIns.open("memory.txt", ios::in);
 
     cycle = 0;
+    string instruction = "";
+    string* insToken = new string[4];
 
     while (!(mipsIns.tellg() == -1 && CheckEnding())) {
         cycle += 1;
@@ -41,18 +40,19 @@ int main(void) {
             Parse_Instruction(instruction, insToken);
         }
         else {
-            // cout << "EOF!!!" << endl;
-            instruction = insToken[0] = "";
+            //cout << "EOF!!!" << endl;
+            instruction = "";
+            insToken[0] = "";
             EOF_count++;
         }
         if(cycle>25) break;
         fprintf(outputFilePtr, "Cycle %d : \n", cycle);
         Move_Stages_Instruction(insToken[0]);
 
+        Check_hazard();
+
         Write_Back();
-        Bubble(); //
         Memory_Read_Write();
-        Bubble(); //
         Execute();
         // cout<< "[ID_Stage.ReadReg1]: "<< ID_Stage.ReadReg1 <<endl
         //         << "[ID_Stage.ReadReg2]: "<< ID_Stage.ReadReg2 <<endl;
@@ -61,7 +61,6 @@ int main(void) {
         Instruction_Decode();
         Instruction_Fetch(insToken);
 
-        Check_hazard();
         if(!hazard && stage_ins[1] == BEQ)
         {
             if(mipsRegisters[ID_Stage.ReadReg1] == mipsRegisters[ID_Stage.ReadReg2])
@@ -77,6 +76,8 @@ int main(void) {
 
     fprintf(outputFilePtr, "MIPS code needs %d cycles\n", cycle);
     Print_Reg_Mem(outputFilePtr);
+
+    delete[] insToken;
 
 #if (OUTPUT_FILE_OPEN == 1)
     fclose(outputFilePtr);
