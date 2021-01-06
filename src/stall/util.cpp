@@ -8,7 +8,6 @@
 using namespace std;
 #define OUTPUT_FIELD 5
 
-
 int mipsRegisters[32] = {0};
 int memory[32] = {0};
 
@@ -19,7 +18,7 @@ FILE *outputFilePtr = stdout;
 int cycle = 0;
 void Instruction_Backtrack(int lines) {
     // cout << "Back track called: " << lines << endl;
-   if (lines == 0)
+    if (lines == 0)
         return;
     else if (lines < 0) {
         mipsIns.setstate(headIns.rdstate());
@@ -78,14 +77,17 @@ void Parse_Instruction(string &instruction, string insToken[4]) {
 
 void Move_Stages_Instruction(string &Next_New_Instruction) {
     int move_lb = 0;
-    if(hazard) move_lb = 2;
-    if(branch_stall) move_lb = 1;
+    if (hazard) move_lb = 2;
+    if (branch_stall) move_lb = 1;
     for (int stages_ins_idx = 4; stages_ins_idx > move_lb; stages_ins_idx--) {
         stage_ins[stages_ins_idx] = stage_ins[stages_ins_idx - 1];
     }
     // cout << "New instruction " << Next_New_Instruction << endl;
-    if(!hazard)
-        stage_ins[0] = Next_New_Instruction;
+    if (!hazard) stage_ins[0] = Next_New_Instruction;
+    if (taken) {
+        stage_ins[1] = "";
+        taken = false;
+    }
 }
 
 bool CheckEnding(void) {
