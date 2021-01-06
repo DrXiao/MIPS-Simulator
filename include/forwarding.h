@@ -3,11 +3,15 @@
 
 
 extern bool Load_Use_Hazard;
-extern bool Branch_Hazard;
 extern int Load_Use_count;
+
+extern int Branch_Stall;
+extern bool Branch_Hazard;
 
 void Check_EX_And_MEM_Hazard(void);
 void Check_Load_Use_Hazard(void);
+void Check_Branch_Stall(void);
+void Branch_Data_Hazard_2nd_3nd(void);
 void Check_Branch_Hazard(void);
 void EX_MEM_Forwarding(void);
 void Load_Use_Forwarding(void);

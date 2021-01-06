@@ -35,8 +35,6 @@ MEM_WB_Pipeline_Reg MEM_WB_Reg = {.Ctl_WB = {.Reg_Write = 0, .MemToReg = 0},
                                   .ALU_Result = 0,
                                   .RegRd = 0};
 
-PipeLine_IF_Stage IF_Stage = {.tokens = {"", "", "", ""}};
-
 Pipeline_ID_Stage ID_Stage = {
     .ReadReg1 = 0, .ReadReg2 = 0, .ReadData1 = 0, .ReadData2 = 0};
 
@@ -206,12 +204,13 @@ void Instruction_Decode(void) {
         ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
         ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
         ID_EX_Reg.RegRd = IF_ID_Reg.RegRd; // Needs to check
+        Branch_Data_Hazard_2nd_3nd();
     }
 }
 
 void Instruction_Fetch(string insToken[4]) {
     memset(&IF_ID_Reg, 0, sizeof(IF_ID_Reg));
-    if (stage_ins[0] == "") { return; }
+    if (stage_ins[0] == "" || Branch_Stall) { return; }
     fprintf(outputFilePtr, "\t%s : IF\n", stage_ins[0].c_str());
 
     if (Load_Use_Hazard) { return; }

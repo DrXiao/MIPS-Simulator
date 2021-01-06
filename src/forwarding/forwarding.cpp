@@ -14,6 +14,7 @@ bool MEM_Hazard_Rt = 0;
 bool Load_Use_Hazard = 0;
 bool Load_Use_Hazard_Forwarding_Rs = 0;
 bool Load_Use_Hazard_Forwarding_Rt = 0;
+int Branch_Stall = 0;
 bool Branch_Hazard = 0;
 bool BEQ_Taken=0;
 
@@ -79,6 +80,49 @@ void Check_Load_Use_Hazard(void) {
     }
 }
 
+void Check_Branch_Stall(void) {
+    // 前一個是 lw
+    Branch_Stall = 0;
+    if (stage_ins[2] == "lw" && ID_Stage.ReadReg1 == EX_MEM_Reg.RegRd) {
+        Branch_Stall = 1;
+    }
+    else if (stage_ins[2] == "lw" && ID_Stage.ReadReg2 == EX_MEM_Reg.RegRd) {
+        Branch_Stall = 1;
+    }
+    else if (stage_ins[2] == "add" && ID_Stage.ReadReg1 == EX_MEM_Reg.RegRd) {
+        Branch_Stall = 1;
+    }
+    else if (stage_ins[2] == "add" && ID_Stage.ReadReg2 == EX_MEM_Reg.RegRd) {
+        Branch_Stall = 1;
+    }
+    else if (stage_ins[3] == "lw" && ID_Stage.ReadReg1 == MEM_WB_Reg.RegRd) {
+        Branch_Stall = 1;
+    }
+    else if (stage_ins[3] == "lw" && ID_Stage.ReadReg2 == MEM_WB_Reg.RegRd) {
+        Branch_Stall = 1;
+    }
+    
+}
+
+void Branch_Data_Hazard_2nd_3nd(void) {
+
+    // 前2、前3 有衝突
+    if (ID_Stage.ReadReg1 == EX_MEM_Reg.RegRd) {
+        ID_EX_Reg.ReadData1 = EX_MEM_Reg.ALU_Result;
+    }
+    else if (ID_Stage.ReadReg2 == EX_MEM_Reg.RegRd) {
+        ID_EX_Reg.ReadData2 = EX_MEM_Reg.ALU_Result;
+    }
+    if (ID_Stage.ReadReg1 == MEM_WB_Reg.RegRd) {
+        ID_EX_Reg.ReadData1 = MEM_WB_Reg.ALU_Result;
+    }
+    else if (ID_Stage.ReadReg2 == MEM_WB_Reg.RegRd) {
+        ID_EX_Reg.ReadData2 = MEM_WB_Reg.ALU_Result;
+    }
+}
+
+
+
 void Check_Branch_Hazard(void) {
     if (stage_ins[1] == BEQ && ID_EX_Reg.ReadData1 == ID_EX_Reg.ReadData2) {
         stage_ins[0] = "";
@@ -123,11 +167,11 @@ void EX_MEM_Forwarding(void) {
         EX_Hazard_Rt = 0;
     }
     if (MEM_Hazard_Rs) {
-        ID_EX_Reg.ReadData1 = WB_Stage.WriteBackData;
+        ID_EX_Reg.ReadData1 = MEM_WB_Reg.ALU_Result;
         MEM_Hazard_Rs = 0;
     }
     if (MEM_Hazard_Rt) {
-        ID_EX_Reg.ReadData2 = WB_Stage.WriteBackData;
+        ID_EX_Reg.ReadData2 = MEM_WB_Reg.ALU_Result;
         MEM_Hazard_Rt = 0;
     }
 }
