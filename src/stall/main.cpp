@@ -26,7 +26,7 @@ int main(void) {
 #endif
  
     mipsIns.open("memory.txt", ios::in);
-    prevIns.open("memory.txt", ios::in);
+    headIns.open("memory.txt", ios::in);
 
     cycle = 0;
     
@@ -34,7 +34,7 @@ int main(void) {
         cycle += 1;
         // cout << prevIns.tellg() << " " <<  mipsIns.tellg() << endl;
         if (!mipsIns.eof()) {
-            prevIns.seekg(mipsIns.tellg());
+            insLine++;
             getline(mipsIns, instruction);
             Parse_Instruction(instruction, insToken);
         }
@@ -102,7 +102,7 @@ int main(void) {
         
     }
     mipsIns.close();
-    prevIns.close();
+    headIns.close();
 
     fprintf(outputFilePtr, "MIPS code needs %d cycles\n", cycle);
     Print_Reg_Mem(outputFilePtr);

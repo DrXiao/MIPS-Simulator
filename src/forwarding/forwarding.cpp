@@ -72,12 +72,18 @@ void Check_Load_Use_Hazard(void) {
         Load_Use_count = 3;
         Hazard = true;
     }
-    if (Hazard) {
-        Instruction_Backtrack(-1);
-    }
+    if (Hazard) { Instruction_Backtrack(-1); }
     if (Load_Use_count != 0) {
         Load_Use_count--;
         if (!Load_Use_count) { Load_Use_Forwarding(); }
+    }
+}
+
+void Check_Branch_Hazard(void) {
+    if (stage_ins[1] == BEQ && ID_EX_Reg.ReadData1 == ID_EX_Reg.ReadData2) {
+        stage_ins[0] = "";
+        memset(&IF_ID_Reg, 0, sizeof(IF_ID_Reg));
+        Instruction_Backtrack(ID_EX_Reg.Immediate - 1);
     }
 }
 

@@ -12,28 +12,32 @@ int mipsRegisters[32] = {0};
 int memory[32] = {0};
 
 fstream mipsIns;
-fstream prevIns;
-
+fstream headIns;
+uint32_t insLine = 0;
 FILE *outputFilePtr = stdout;
 int cycle = 0;
 void Instruction_Backtrack(int lines) {
     cout << "Back track called: " << lines << endl;
-    if (lines == 0)
+   if (lines == 0)
         return;
-    else if (lines == -1) {
-        mipsIns.setstate(prevIns.rdstate());
-        mipsIns.seekg(prevIns.tellg());
+    else if (lines < 0) {
+        mipsIns.setstate(headIns.rdstate());
+        mipsIns.seekg(headIns.tellg());
+        int count = insLine + lines;
+        while (count--) {
+            string prevIns;
+            getline(mipsIns, prevIns);
+        }
         cout << mipsIns.tellg() << endl;
-        return;
+        insLine += lines;
     }
-    int offset = lines > 0 ? 1 : -1;
-    lines = lines < 0 ? -lines + 1 : lines;
-    while (lines) {
-        mipsIns.seekg(offset, mipsIns.cur);
-        if (mipsIns.peek() == '\n');
-            lines--;
+    else {
+        while (lines--) {
+            string prevIns;
+            getline(mipsIns, prevIns);
+            insLine++;
+        }
     }
-    mipsIns.seekg(1, mipsIns.cur);
 }
 
 void Init_Reg_Mem(void) {
