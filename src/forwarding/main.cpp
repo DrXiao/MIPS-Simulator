@@ -32,8 +32,8 @@ int main(void) {
 
     while (mipsIns.eof() == false || CheckEnding() == false) {
         cycle += 1;
-        
-        if (mipsIns.eof() == false ) {
+
+        if (mipsIns.eof() == false) {
             insLine++;
             getline(mipsIns, instruction);
             Parse_Instruction(instruction, insToken);
@@ -44,17 +44,20 @@ int main(void) {
         fprintf(outputFilePtr, "Cycle %d : \n", cycle);
         Move_Stages_Instruction(insToken[0]);
 
-
         Write_Back();
         Memory_Read_Write();
         Execute();
         Load_Use_Hazard_Flush();
         Instruction_Decode();
         Instruction_Fetch(insToken);
+        if (Branch_Stall) {
+            Instruction_Backtrack(-1);
+            continue;
+        }
 
         Check_EX_And_MEM_Hazard();
         Check_Load_Use_Hazard();
-        Check_Branch_Hazard();
+        Branch_Data_Hazard_2nd_3nd();
     }
     mipsIns.close();
     headIns.close();

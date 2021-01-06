@@ -4,13 +4,6 @@
 #include <string>
 using namespace std;
 
-
-typedef struct PipeLine_IF_Stage {
-
-    string tokens[4];    
-
-} PipeLine_IF_Stage;
-
 typedef struct Pipeline_ID_Stage {
     // ID inputs
     uint16_t ReadReg1;
@@ -49,7 +42,6 @@ typedef struct Pipeline_WB_Stage {
     int32_t WriteBackData;
 } Pipeline_WB_Stage;
 
-extern PipeLine_IF_Stage IF_Stage;
 extern Pipeline_ID_Stage ID_Stage;
 extern Pipeline_EX_Stage EX_Stage;
 extern Pipeline_MEM_Stage Mem_Stage;
