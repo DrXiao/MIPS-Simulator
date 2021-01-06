@@ -29,7 +29,7 @@ int main(void) {
     prevIns.open("memory.txt", ios::in);
 
     cycle = 0;
-    int EOF_count = 0;
+    
     while (!(mipsIns.tellg()==-1 && CheckEnding()))  {
         cycle += 1;
         // cout << prevIns.tellg() << " " <<  mipsIns.tellg() << endl;
@@ -53,13 +53,14 @@ int main(void) {
         Bubble();
         
         Memory_Read_Write();
-
         Bubble();
-
-        Execute(); 
+        Execute();
+        // Branch_bubble(); 
         Instruction_Decode();
         Instruction_Fetch(insToken);
-
+        
+        
+        // Check_Branch();
 
         /* 檢查hazard */
         hazard = 0;
@@ -68,7 +69,8 @@ int main(void) {
        if(((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
             && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRs))
             || ((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
-            && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRt)))    
+            && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRt))
+            && !branch)    
         {   
             hazard = 1;
             if(EOF_count < 2)
@@ -87,7 +89,8 @@ int main(void) {
         else if((((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
                 && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRs))
             || ((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
-            && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRt))))
+            && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRt)))
+            && !branch)
         {
             hazard = 1;
             if(EOF_count < 2)

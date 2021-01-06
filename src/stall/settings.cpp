@@ -155,6 +155,7 @@ void Instruction_Decode(void) {
     }
     fprintf(outputFilePtr, "\t%s : ID\n", stage_ins[1].c_str());
     if(hazard){printf("hazard in Instruct_Decode!!!!!!!\n");  return;}
+    if(branch){printf("stall in branch\n"); return;}
     ID_Stage.ReadReg1 = IF_ID_Reg.RegRs;
     ID_Stage.ReadReg2 = IF_ID_Reg.RegRt;
 
