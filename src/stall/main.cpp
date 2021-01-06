@@ -4,6 +4,7 @@
 #include <fstream>
 
 #include "pipelineReg.h"
+#include "pipelineUnit.h"
 #include "util.h"
 #include "stall.h"
 using namespace std;
@@ -43,7 +44,7 @@ int main(void) {
             instruction = insToken[0] = "";
             EOF_count++;
         }
-        if(cycle>15) break;
+        if(cycle>25) break;
         fprintf(outputFilePtr, "Cycle %d : \n", cycle);
         Move_Stages_Instruction(insToken[0]);
 
@@ -57,6 +58,15 @@ int main(void) {
         Instruction_Fetch(insToken);
         
         Check_hazard();
+        if(!hazard && stage_ins[1] == BEQ)
+        {
+            if(mipsRegisters[ID_Stage.ReadReg1] == mipsRegisters[ID_Stage.ReadReg2])
+            {
+                stage_ins[0] = "";
+                cout<<" jump to "<<ID_EX_Reg.Immediate<<endl;
+                Instruction_Backtrack(ID_EX_Reg.Immediate - 1);
+            }
+        }
     }
     mipsIns.close();
     headIns.close();

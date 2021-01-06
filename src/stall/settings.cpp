@@ -166,7 +166,8 @@ void Instruction_Decode(void) {
 
     ID_Stage.ReadData1 = mipsRegisters[ID_Stage.ReadReg1];
     ID_Stage.ReadData2 = mipsRegisters[ID_Stage.ReadReg2];
-
+    cout<< ID_Stage.ReadReg1 << " " << ID_Stage.ReadData1 << endl
+        << ID_Stage.ReadReg2 << " " << ID_Stage.ReadData2 << endl;
     if (stage_ins[1] == ADD || stage_ins[1] == SUB) {
         ID_EX_Reg.Ctl_WB = {.Reg_Write = 1, .MemToReg = 0};
         ID_EX_Reg.Ctl_M = {.Branch = 0, .Mem_Read = 0, .Mem_Write = 0};
