@@ -160,7 +160,7 @@ void Instruction_Decode(void) {
         return;
     }
     fprintf(outputFilePtr, "\t%s : ID\n", stage_ins[1].c_str());
-    if(hazard) return;
+    if(hazard || branch_stall) return;
     ID_Stage.ReadReg1 = IF_ID_Reg.RegRs;
     ID_Stage.ReadReg2 = IF_ID_Reg.RegRt;
 
@@ -211,7 +211,6 @@ void Instruction_Decode(void) {
         ID_EX_Reg.RegRs = IF_ID_Reg.RegRs;
         ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
         ID_EX_Reg.RegRd = IF_ID_Reg.RegRd; // Needs to check
-        
     }
 }
 
@@ -219,7 +218,7 @@ void Instruction_Fetch(string insToken[4]) {
 
     memset(&IF_ID_Reg,0, sizeof(IF_ID_Reg));
     if (stage_ins[0] == "") return;
-
+ 
     fprintf(outputFilePtr, "\t%s : IF\n", stage_ins[0].c_str());
 
     IF_ID_Reg.OpCode = insToken[0];

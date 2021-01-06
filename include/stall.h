@@ -3,8 +3,8 @@
 
 extern int EOF_count;
 extern bool hazard;
-extern int branch;
-extern bool branch_taken;
+extern bool taken;
+extern bool branch_stall;
 void Bubble(void);
 void Check_hazard();
 void Check_Branch(void);

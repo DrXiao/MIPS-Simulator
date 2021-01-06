@@ -95,28 +95,28 @@ void Check_Load_Use_Hazard(void) {
 void Check_Branch_Stall(void) {
     // 前一個是 lw
     Branch_Stall = 0;
-    if (stage_ins[1] != "beq" || stall_flag == true) { return; }
-    if (stage_ins[2] == "lw" && ID_Stage.ReadReg1 == EX_MEM_Reg.RegRd) {
+    if (stage_ins[1] != BEQ || stall_flag == true) { return; }
+    if (stage_ins[2] == LW && IF_ID_Reg.RegRs == EX_MEM_Reg.RegRd) {
         stall_flag = true;
         Branch_Stall = 1;
     }
-    else if (stage_ins[2] == "lw" && ID_Stage.ReadReg2 == EX_MEM_Reg.RegRd) {
+    else if (stage_ins[2] == LW && IF_ID_Reg.RegRt == EX_MEM_Reg.RegRd) {
         stall_flag = true;
         Branch_Stall = 1;
     }
-    else if (stage_ins[2] == "add" && ID_Stage.ReadReg1 == EX_MEM_Reg.RegRd) {
+    else if ((stage_ins[2] == ADD || stage_ins[2] == SUB) && IF_ID_Reg.RegRs == EX_MEM_Reg.RegRd) {
         stall_flag = true;
         Branch_Stall = 1;
     }
-    else if (stage_ins[2] == "add" && ID_Stage.ReadReg2 == EX_MEM_Reg.RegRd) {
+    else if ((stage_ins[2] == ADD || stage_ins[2] == SUB) && IF_ID_Reg.RegRt == EX_MEM_Reg.RegRd) {
         stall_flag = true;
         Branch_Stall = 1;
     }
-    else if (stage_ins[3] == "lw" && ID_Stage.ReadReg1 == MEM_WB_Reg.RegRd) {
+    else if (stage_ins[3] == LW && IF_ID_Reg.RegRs == MEM_WB_Reg.RegRd) {
         stall_flag = true;
         Branch_Stall = 1;
     }
-    else if (stage_ins[3] == "lw" && ID_Stage.ReadReg2 == MEM_WB_Reg.RegRd) {
+    else if (stage_ins[3] == LW && IF_ID_Reg.RegRt == MEM_WB_Reg.RegRd) {
         stall_flag = true;
         Branch_Stall = 1;
     }

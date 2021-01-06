@@ -25,21 +25,22 @@ int main(void) {
 #if (OUTPUT_FILE_OPEN == 1)
     outputFilePtr = fopen("result.txt", "w");
 #endif
- 
+
     mipsIns.open("memory.txt", ios::in);
     headIns.open("memory.txt", ios::in);
 
     cycle = 0;
-    
-    while (!(mipsIns.tellg()==-1 && CheckEnding()))  {
+
+    while (!(mipsIns.tellg() == -1 && CheckEnding())) {
         cycle += 1;
+
         // cout << prevIns.tellg() << " " <<  mipsIns.tellg() << endl;
         if (!mipsIns.eof()) {
             insLine++;
             getline(mipsIns, instruction);
             Parse_Instruction(instruction, insToken);
         }
-        else{
+        else {
             // cout << "EOF!!!" << endl;
             instruction = insToken[0] = "";
             EOF_count++;
@@ -48,15 +49,18 @@ int main(void) {
         fprintf(outputFilePtr, "Cycle %d : \n", cycle);
         Move_Stages_Instruction(insToken[0]);
 
-
         Write_Back();
-        Bubble();           //
+        Bubble(); //
         Memory_Read_Write();
-        Bubble();           //
+        Bubble(); //
         Execute();
+        // cout<< "[ID_Stage.ReadReg1]: "<< ID_Stage.ReadReg1 <<endl
+        //         << "[ID_Stage.ReadReg2]: "<< ID_Stage.ReadReg2 <<endl;
+        // 要stall 並且取出暫存器比較 並決定來沖刷
+
         Instruction_Decode();
         Instruction_Fetch(insToken);
-        
+
         Check_hazard();
         if(!hazard && stage_ins[1] == BEQ)
         {
@@ -80,9 +84,3 @@ int main(void) {
     // PAUSE;
     return 0;
 }
-
-/*
-* beq 只寫ㄌstall
-* 還沒判斷跳躍
-* 給值還沒寫
-*/

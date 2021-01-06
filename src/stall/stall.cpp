@@ -5,11 +5,9 @@
 #include "pipelineReg.h"
 using namespace std;
 
-bool hazard = 0;
-int branch = 0;
-//0 原本沒有發生
-//1 還有發生一次
-//2 還要發生兩次
+bool hazard = false;
+bool taken = false;
+bool branch_stall = false;
 int EOF_count = 0;
 bool branch_taken = false;
 void Bubble()
@@ -30,8 +28,7 @@ void Check_hazard()
     if(((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
             && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRs))
         || ((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
-            && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRt))
-        && !branch)    
+            && (EX_MEM_Reg.RegRd == ID_EX_Reg.RegRt)))    
     {   
         hazard = 1;
         if(EOF_count < 2)
@@ -43,8 +40,7 @@ void Check_hazard()
     else if((((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
                 && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRs))
         || ((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
-            && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRt)))
-        && !branch)
+            && (MEM_WB_Reg.RegRd == ID_EX_Reg.RegRt))))
     {
         hazard = 1;
         if(EOF_count < 2)

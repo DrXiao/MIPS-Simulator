@@ -210,6 +210,7 @@ void Instruction_Decode(void) {
         ID_EX_Reg.RegRt = IF_ID_Reg.RegRt;
         ID_EX_Reg.RegRd = IF_ID_Reg.RegRd; // Needs to check
         Branch_Data_Hazard_2nd_3nd();
+        Check_Branch_Hazard();
     }
 }
 
