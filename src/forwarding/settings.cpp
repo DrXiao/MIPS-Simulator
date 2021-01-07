@@ -9,7 +9,7 @@
 using namespace std;
 
 IF_ID_Pipeline_Reg IF_ID_Reg = {
-    .OpCode = "", .RegRs = 0, .RegRt = 0, .RegRd = 0, .Immediate = 0};
+    .RegRs = 0, .RegRt = 0, .RegRd = 0, .Immediate = 0};
 
 ID_EX_Pipeline_Reg ID_EX_Reg = {
     .Ctl_WB = {.Reg_Write = 0, .MemToReg = 0},
@@ -228,7 +228,6 @@ void Instruction_Fetch(string insToken[4]) {
 
     if (Load_Use_Hazard) { return; }
 
-    IF_ID_Reg.OpCode = insToken[0];
     if (insToken[0] == LW || insToken[0] == SW) {
         sscanf(insToken[1].c_str(), "$%hu", &IF_ID_Reg.RegRt);
         sscanf(insToken[2].c_str(), "%hd($%hu)", &IF_ID_Reg.Immediate,

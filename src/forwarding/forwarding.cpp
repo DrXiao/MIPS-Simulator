@@ -152,7 +152,6 @@ void Check_Branch_Hazard(void) {
 void Load_Use_Hazard_Flush(void) {
     if (Load_Use_Hazard) {
         stage_ins[1] = "";
-        IF_ID_Reg.OpCode = insToken[0];
         if (insToken[0] == LW || insToken[0] == SW) {
             sscanf(insToken[1].c_str(), "$%hu", &IF_ID_Reg.RegRt);
             sscanf(insToken[2].c_str(), "%hd($%hu)", &IF_ID_Reg.Immediate,
