@@ -86,10 +86,10 @@ void Move_Stages_Instruction(string &Next_New_Instruction) {
 
     //Insert bubble in to EX stage and flush ID/EX pipeline register
     if(hazard){
-        cout << "Inserted bubble into EX stage" << endl;
+        //cout << "Inserted bubble into EX stage" << endl;
         stage_ins[2] = "";
 
-        cout << "Flushed ID/EX pipeline register" << endl;
+        //cout << "Flushed ID/EX pipeline register" << endl;
         memset(&ID_EX_Reg, 0, sizeof(ID_EX_Reg));
     }
     // cout << "New instruction " << Next_New_Instruction << endl;

@@ -24,11 +24,6 @@ typedef struct control_WB {
 } control_WB;
 
 typedef struct IF_ID_Pipeline_Reg {
-    // Only POD data type can be initialize via memset.
-    // And string is not a POD data type.
-    // This will cause segmentation fault in some case.
-    // Fixed by ifTNT
-    //string OpCode; // "lw", "sub", "add", "beq", "sw";
     uint16_t RegRs;
     uint16_t RegRt;
     uint16_t RegRd;

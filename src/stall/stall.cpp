@@ -24,12 +24,6 @@ void Check_hazard()
 {
     hazard = 0;
         /* EX data hazard */
-    
-    cout << "EX_MEM_Reg.RegRd " << EX_MEM_Reg.RegRd << endl
-         << "ID_EX_Reg.RegRd " << ID_EX_Reg.RegRd << endl
-         << "ID_EX_Reg.RegRt " << ID_EX_Reg.RegRt << endl
-         << "IF_ID_Reg.RegRs " << IF_ID_Reg.RegRs << endl
-         << "IF_ID_Reg.RegRt " << IF_ID_Reg.RegRt << endl;
 
     if(((ID_EX_Reg.Ctl_WB.Reg_Write == 1) && (ID_EX_Reg.RegRd != 0) 
             && (ID_EX_Reg.RegRd == IF_ID_Reg.RegRs))
@@ -39,7 +33,7 @@ void Check_hazard()
         hazard = 1;
         if(EOF_count < 2)
             Instruction_Backtrack(-1);
-        printf("EXE hazard\n");       
+        //printf("EXE hazard\n");       
     }
                 
         /* MEM data hazard */
@@ -51,7 +45,7 @@ void Check_hazard()
         hazard = 1;
         if(EOF_count < 2)
             Instruction_Backtrack(-1);
-        printf("MEM hazard\n");  
+        //printf("MEM hazard\n");  
     }
 
     /* Load use data hazard*/
@@ -65,21 +59,3 @@ void Check_hazard()
     }
 
 }
-
-
-void Check_BEQ_Taken()
-{
-    branch_taken = true;
-}
-
-void Branch_Flush()
-{
-    
-    if(branch_taken)
-    {
-        cout<<"flush!!!"<<endl;
-    }
-
-} 
-
-

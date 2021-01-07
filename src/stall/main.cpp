@@ -54,9 +54,6 @@ int main(void) {
         Write_Back();
         Memory_Read_Write();
         Execute();
-        // cout<< "[ID_Stage.ReadReg1]: "<< ID_Stage.ReadReg1 <<endl
-        //         << "[ID_Stage.ReadReg2]: "<< ID_Stage.ReadReg2 <<endl;
-        // 要stall 並且取出暫存器比較 並決定來沖刷
 
         Instruction_Decode();
         Instruction_Fetch(insToken);
@@ -66,7 +63,7 @@ int main(void) {
             if(mipsRegisters[ID_Stage.ReadReg1] == mipsRegisters[ID_Stage.ReadReg2])
             {
                 stage_ins[0] = "";
-                cout<<" jump to "<<ID_EX_Reg.Immediate<<endl;
+                //cout<<" jump to "<<ID_EX_Reg.Immediate<<endl;
                 Instruction_Backtrack(ID_EX_Reg.Immediate - 1);
             }
         }
