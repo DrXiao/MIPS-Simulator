@@ -51,7 +51,6 @@ string stage_ins[5];
 
 void Write_Back(void) {
     if (stage_ins[4] == "") return;
-    //MEM_WB_Reg.print();
     fprintf(outputFilePtr, "\t%s : WB", stage_ins[4].c_str());
     if (stage_ins[4] == SW || stage_ins[4] == BEQ) {
         fprintf(outputFilePtr, " %dX\n", MEM_WB_Reg.Ctl_WB.Reg_Write);
@@ -73,18 +72,17 @@ void Write_Back(void) {
 void Memory_Read_Write(void) {
     static uint8_t *memoryPtr = (uint8_t *)memory;
 
-    if (stage_ins[3] == ""){
-        memset(&MEM_WB_Reg,0, sizeof(MEM_WB_Reg));
+    if (stage_ins[3] == "") {
+        memset(&MEM_WB_Reg, 0, sizeof(MEM_WB_Reg));
         return;
     }
-    //EX_MEM_Reg.print();
     fprintf(outputFilePtr, "\t%s : MEM", stage_ins[3].c_str());
-    if(stage_ins[3] == SW || stage_ins[3] == BEQ){
+    if (stage_ins[3] == SW || stage_ins[3] == BEQ) {
         fprintf(outputFilePtr, " %d%d%d %dX\n", EX_MEM_Reg.Ctl_M.Branch,
                 EX_MEM_Reg.Ctl_M.Mem_Read, EX_MEM_Reg.Ctl_M.Mem_Write,
                 EX_MEM_Reg.Ctl_WB.Reg_Write);
     }
-    else{
+    else {
         fprintf(outputFilePtr, " %d%d%d %d%d\n", EX_MEM_Reg.Ctl_M.Branch,
                 EX_MEM_Reg.Ctl_M.Mem_Read, EX_MEM_Reg.Ctl_M.Mem_Write,
                 EX_MEM_Reg.Ctl_WB.Reg_Write, EX_MEM_Reg.Ctl_WB.MemToReg);
@@ -105,29 +103,25 @@ void Memory_Read_Write(void) {
 }
 
 void Execute(void) {
-    
-    
-    if (stage_ins[2] == "")
-    {
+
+    if (stage_ins[2] == "") {
         memset(&EX_MEM_Reg, 0, sizeof(EX_MEM_Reg));
         return;
     }
-    //ID_EX_Reg.print();
     fprintf(outputFilePtr, "\t%s : EX", stage_ins[2].c_str());
-    
-    if (stage_ins[2] == SW || stage_ins[2] == BEQ){
+
+    if (stage_ins[2] == SW || stage_ins[2] == BEQ) {
         fprintf(outputFilePtr, " X%d %d%d%d %dX\n", ID_EX_Reg.Ctl_Ex.ALUSrc,
                 ID_EX_Reg.Ctl_M.Branch, ID_EX_Reg.Ctl_M.Mem_Read,
                 ID_EX_Reg.Ctl_M.Mem_Write, ID_EX_Reg.Ctl_WB.Reg_Write);
     }
-    else{
+    else {
         fprintf(outputFilePtr, " %d%d %d%d%d %d%d\n", ID_EX_Reg.Ctl_Ex.RegDst,
                 ID_EX_Reg.Ctl_Ex.ALUSrc, ID_EX_Reg.Ctl_M.Branch,
                 ID_EX_Reg.Ctl_M.Mem_Read, ID_EX_Reg.Ctl_M.Mem_Write,
                 ID_EX_Reg.Ctl_WB.Reg_Write, ID_EX_Reg.Ctl_WB.MemToReg);
     }
     /* data hazard */
-    //if(hazard) {printf("hazard in EXE_MEM pipeline!!!!!\n");return;}
     EX_Stage.Operand_1 = ID_EX_Reg.ReadData1;
     if (ID_EX_Reg.Ctl_Ex.ALUSrc) { EX_Stage.Operand_2 = ID_EX_Reg.Immediate; }
     else {
@@ -141,8 +135,6 @@ void Execute(void) {
         EX_Stage.ALU_Result = EX_Stage.Operand_1 + EX_Stage.Operand_2;
     }
     if (EX_Stage.ALU_Result == 0) EX_Stage.Zero = 1;
-    // if(EX_Stage.Zero && stage_ins[2] == BEQ) Check_BEQ_Taken();
-
 
     EX_MEM_Reg.Ctl_WB = ID_EX_Reg.Ctl_WB;
     EX_MEM_Reg.Ctl_M = ID_EX_Reg.Ctl_M;
@@ -153,28 +145,25 @@ void Execute(void) {
         EX_MEM_Reg.RegRd = ID_EX_Reg.RegRd;
     else
         EX_MEM_Reg.RegRd = ID_EX_Reg.RegRt;
-    
 }
 
 void Instruction_Decode(void) {
-   
-    if (stage_ins[1] == ""){
-        memset(&ID_EX_Reg,0, sizeof(ID_EX_Reg));
+
+    if (stage_ins[1] == "") {
+        memset(&ID_EX_Reg, 0, sizeof(ID_EX_Reg));
         return;
     }
-    //IF_ID_Reg.print();
     fprintf(outputFilePtr, "\t%s : ID\n", stage_ins[1].c_str());
-    
+
     // Skip if stalled
-    if(hazard) return;
+    if (hazard) return;
 
     ID_Stage.ReadReg1 = IF_ID_Reg.RegRs;
     ID_Stage.ReadReg2 = IF_ID_Reg.RegRt;
 
     ID_Stage.ReadData1 = mipsRegisters[ID_Stage.ReadReg1];
     ID_Stage.ReadData2 = mipsRegisters[ID_Stage.ReadReg2];
-    //cout<< ID_Stage.ReadReg1 << " " << ID_Stage.ReadData1 << endl
-    //    << ID_Stage.ReadReg2 << " " << ID_Stage.ReadData2 << endl;
+
     if (stage_ins[1] == ADD || stage_ins[1] == SUB) {
         ID_EX_Reg.Ctl_WB = {.Reg_Write = 1, .MemToReg = 0};
         ID_EX_Reg.Ctl_M = {.Branch = 0, .Mem_Read = 0, .Mem_Write = 0};
@@ -221,16 +210,16 @@ void Instruction_Decode(void) {
     }
 }
 
-void Instruction_Fetch(string* insToken) {
+void Instruction_Fetch(string *insToken) {
 
     if (stage_ins[0] == "") return;
- 
+
     fprintf(outputFilePtr, "\t%s : IF\n", stage_ins[0].c_str());
 
-    // If stalled, do not flush the pipeline register and not fetch new instruction
-    if(!hazard){
-        memset(&IF_ID_Reg,0, sizeof(IF_ID_Reg));
-    }else{
+    // If stalled, do not flush the pipeline register and not fetch new
+    // instruction
+    if (!hazard) { memset(&IF_ID_Reg, 0, sizeof(IF_ID_Reg)); }
+    else {
         return;
     }
 

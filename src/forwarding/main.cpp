@@ -12,7 +12,7 @@ using namespace std;
     printf("Press any key to continue...");                                    \
     cin.get();
 
-#define OUTPUT_FILE_OPEN 0
+#define OUTPUT_FILE_OPEN 1
 
 string instruction = "";
 string insToken[4] = {"", "", "", ""};
@@ -41,7 +41,6 @@ int main(void) {
         }
         else
             instruction = insToken[0] = "";
-        if (cycle > 15) break;
         fprintf(outputFilePtr, "Cycle %d : \n", cycle);
         Move_Stages_Instruction(insToken[0]);
 
@@ -49,7 +48,6 @@ int main(void) {
         Memory_Read_Write();
         Execute();
         Check_Branch_Stall();
-        // BEQ_Flush();
         Load_Use_Hazard_Flush();
         Instruction_Decode();
         Instruction_Fetch(insToken);

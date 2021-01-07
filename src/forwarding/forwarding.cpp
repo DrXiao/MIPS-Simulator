@@ -42,26 +42,22 @@ void Check_EX_And_MEM_Hazard(void) {
     if (EX_HAZARD(Rs)) {
 
         EX_Hazard_Rs = 1;
-        // ID_EX_Reg.ReadData1 = EX_MEM_Reg.ALU_Result;
     }
     // Mem hazard
     else if (MEM_HAZARD(Rs)) {
 
         MEM_Hazard_Rs = 1;
-        // ID_EX_Reg.ReadData1 = WB_Stage.WriteBackData;
     }
 
     // EX hazard
     if (EX_HAZARD(Rt)) {
 
         EX_Hazard_Rt = 1;
-        // ID_EX_Reg.ReadData2 = EX_MEM_Reg.ALU_Result;
     }
     // Mem hazard
     else if (MEM_HAZARD(Rt)) {
 
         MEM_Hazard_Rt = 1;
-        // ID_EX_Reg.ReadData2 = WB_Stage.WriteBackData;
     }
     EX_MEM_Forwarding();
 }
@@ -104,11 +100,13 @@ void Check_Branch_Stall(void) {
         stall_flag = true;
         Branch_Stall = 1;
     }
-    else if ((stage_ins[2] == ADD || stage_ins[2] == SUB) && IF_ID_Reg.RegRs == EX_MEM_Reg.RegRd) {
+    else if ((stage_ins[2] == ADD || stage_ins[2] == SUB) &&
+             IF_ID_Reg.RegRs == EX_MEM_Reg.RegRd) {
         stall_flag = true;
         Branch_Stall = 1;
     }
-    else if ((stage_ins[2] == ADD || stage_ins[2] == SUB) && IF_ID_Reg.RegRt == EX_MEM_Reg.RegRd) {
+    else if ((stage_ins[2] == ADD || stage_ins[2] == SUB) &&
+             IF_ID_Reg.RegRt == EX_MEM_Reg.RegRd) {
         stall_flag = true;
         Branch_Stall = 1;
     }

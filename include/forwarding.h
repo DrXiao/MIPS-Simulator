@@ -1,7 +1,6 @@
 #ifndef __FORWARDING_H__
 #define __FORWARDING_H__
 
-
 extern bool Load_Use_Hazard;
 extern int Load_Use_count;
 

@@ -67,8 +67,6 @@ bool CheckEnding(void) {
     return true;
 }
 
-
-
 void Instruction_Backtrack(int lines) {
     if (lines == 0)
         return;
@@ -80,7 +78,6 @@ void Instruction_Backtrack(int lines) {
             string prevIns;
             getline(mipsIns, prevIns);
         }
-        // cout << mipsIns.tellg() << endl;
         insLine += lines;
     }
     else {
@@ -90,15 +87,4 @@ void Instruction_Backtrack(int lines) {
             insLine++;
         }
     }
-
-    /*
-    int offset = lines > 0 ? 1 : -1;
-    lines = lines < 0 ? -lines + 1 : lines;
-    while (lines) {
-        mipsIns.seekg(offset, mipsIns.cur);
-        if (mipsIns.peek() == '\n');
-            lines--;
-    }
-    mipsIns.seekg(1, mipsIns.cur);
-    */
 }

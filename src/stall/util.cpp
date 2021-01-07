@@ -18,7 +18,6 @@ uint32_t insLine = 0;
 FILE *outputFilePtr = stdout;
 int cycle = 0;
 void Instruction_Backtrack(int lines) {
-    // cout << "Back track called: " << lines << endl;
     if (lines == 0)
         return;
     else if (lines < 0) {
@@ -29,7 +28,6 @@ void Instruction_Backtrack(int lines) {
             string prevIns;
             getline(mipsIns, prevIns);
         }
-        // cout << mipsIns.tellg() << endl;
         insLine += lines;
     }
     else {
@@ -84,15 +82,12 @@ void Move_Stages_Instruction(string &Next_New_Instruction) {
         stage_ins[stages_ins_idx] = stage_ins[stages_ins_idx - 1];
     }
 
-    //Insert bubble in to EX stage and flush ID/EX pipeline register
-    if(hazard){
-        //cout << "Inserted bubble into EX stage" << endl;
+    // Insert bubble in to EX stage and flush ID/EX pipeline register
+    if (hazard) {
         stage_ins[2] = "";
 
-        //cout << "Flushed ID/EX pipeline register" << endl;
         memset(&ID_EX_Reg, 0, sizeof(ID_EX_Reg));
     }
-    // cout << "New instruction " << Next_New_Instruction << endl;
     if (!hazard) stage_ins[0] = Next_New_Instruction;
     if (taken) {
         stage_ins[1] = "";

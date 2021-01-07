@@ -13,7 +13,7 @@ using namespace std;
     printf("Press any key to continue...");                                    \
     cin.get();
 
-#define OUTPUT_FILE_OPEN 0
+#define OUTPUT_FILE_OPEN 1
 
 int main(void) {
 
@@ -28,24 +28,21 @@ int main(void) {
 
     cycle = 0;
     string instruction = "";
-    string* insToken = new string[4];
+    string *insToken = new string[4];
 
     while (!(mipsIns.tellg() == -1 && CheckEnding())) {
         cycle += 1;
 
-        // cout << prevIns.tellg() << " " <<  mipsIns.tellg() << endl;
         if (!mipsIns.eof()) {
             insLine++;
             getline(mipsIns, instruction);
             Parse_Instruction(instruction, insToken);
         }
         else {
-            //cout << "EOF!!!" << endl;
             instruction = "";
             insToken[0] = "";
             EOF_count++;
         }
-        if(cycle>25) break;
         fprintf(outputFilePtr, "Cycle %d : \n", cycle);
         Move_Stages_Instruction(insToken[0]);
 
@@ -58,12 +55,10 @@ int main(void) {
         Instruction_Decode();
         Instruction_Fetch(insToken);
 
-        if(!hazard && stage_ins[1] == BEQ)
-        {
-            if(mipsRegisters[ID_Stage.ReadReg1] == mipsRegisters[ID_Stage.ReadReg2])
-            {
+        if (!hazard && stage_ins[1] == BEQ) {
+            if (mipsRegisters[ID_Stage.ReadReg1] ==
+                mipsRegisters[ID_Stage.ReadReg2]) {
                 stage_ins[0] = "";
-                //cout<<" jump to "<<ID_EX_Reg.Immediate<<endl;
                 Instruction_Backtrack(ID_EX_Reg.Immediate - 1);
             }
         }

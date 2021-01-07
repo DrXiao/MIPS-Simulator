@@ -10,4 +10,5 @@ void Check_hazard();
 void Check_Branch(void);
 void Branch_Flush(void);
 void Check_BEQ_Taken(void);
+
 #endif

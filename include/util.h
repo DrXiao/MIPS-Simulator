@@ -18,7 +18,6 @@ extern string insToken[4];
 extern FILE *outputFilePtr;
 extern int cycle;
 
-
 extern int mipsRegisters[32];
 extern int memory[32];
 
@@ -45,8 +44,5 @@ void Move_Stages_Instruction(string &);
 bool CheckEnding(void);
 
 void Instruction_Backtrack(int);
-
-// 亂寫ㄉ
-void Move_With_Stall(void);
 
 #endif
