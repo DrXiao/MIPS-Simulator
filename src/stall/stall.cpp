@@ -25,10 +25,11 @@ void Check_hazard()
     hazard = 0;
         /* EX data hazard */
     
-    // cout << "EX_MEM_Reg.RegRd " << EX_MEM_Reg.RegRd << endl
-    //      << "ID_EX_Reg.RegRd " << ID_EX_Reg.RegRd << endl
-    //      << "IF_ID_Reg.RegRs " << IF_ID_Reg.RegRs << endl
-    //      << "IF_ID_Reg.RegRt " << IF_ID_Reg.RegRt << endl;
+    cout << "EX_MEM_Reg.RegRd " << EX_MEM_Reg.RegRd << endl
+         << "ID_EX_Reg.RegRd " << ID_EX_Reg.RegRd << endl
+         << "ID_EX_Reg.RegRt " << ID_EX_Reg.RegRt << endl
+         << "IF_ID_Reg.RegRs " << IF_ID_Reg.RegRs << endl
+         << "IF_ID_Reg.RegRt " << IF_ID_Reg.RegRt << endl;
 
     if(((ID_EX_Reg.Ctl_WB.Reg_Write == 1) && (ID_EX_Reg.RegRd != 0) 
             && (ID_EX_Reg.RegRd == IF_ID_Reg.RegRs))
@@ -47,15 +48,20 @@ void Check_hazard()
         || ((EX_MEM_Reg.Ctl_WB.Reg_Write == 1) && (EX_MEM_Reg.RegRd != 0) 
             && (EX_MEM_Reg.RegRd == IF_ID_Reg.RegRt)))    
     { 
-    /*else if((((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
-                && (MEM_WB_Reg.RegRd == IF_ID_Reg.RegRs))
-        || ((MEM_WB_Reg.Ctl_WB.Reg_Write == 1) && (MEM_WB_Reg.RegRd != 0) 
-            && (MEM_WB_Reg.RegRd == IF_ID_Reg.RegRt))))
-    {*/
         hazard = 1;
         if(EOF_count < 2)
             Instruction_Backtrack(-1);
         printf("MEM hazard\n");  
+    }
+
+    /* Load use data hazard*/
+    else if((ID_EX_Reg.Ctl_M.Mem_Read == 1)
+            && ((ID_EX_Reg.RegRt == IF_ID_Reg.RegRs) || (ID_EX_Reg.RegRt == IF_ID_Reg.RegRt)))
+    {
+        hazard = 1;
+        if(EOF_count < 2)
+            Instruction_Backtrack(-1);
+        printf("Load use data hazard\n");
     }
 
 }
